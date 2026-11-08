@@ -438,10 +438,21 @@ document.addEventListener('visibilitychange',()=>{const m=Number(settings.autoLo
 const maskName=n=>n?n[0]+'○'.repeat(Math.max(1,n.length-1)):'未命名';
 const fileTag=c=>`${todayStr().replace(/-/g,'').slice(2)}-${maskName(c.name)}-${c.type==='pz'?'陪偵':'羈押'}`;
 function showDownload(name,text,note){
-  const u=URL.createObjectURL(new Blob([text],{type:'application/json'}));
+  const blob=new Blob([text],{type:'application/json'});const u=URL.createObjectURL(blob);
+  let file=null;try{file=new File([blob],name,{type:'application/json'})}catch(e){}
+  const canShare=!!(file&&navigator.canShare&&navigator.canShare({files:[file]}));
+  const canPick=!!window.showSaveFilePicker;
   const m=document.createElement('div');m.className='modal';
-  m.innerHTML=`<div class="box"><h2 style="margin:0 0 8px;color:var(--pri);font-size:18px">案件檔已準備好</h2><p class="muted">${esc(note)}</p><p style="word-break:break-all">${esc(name)}</p><div class="btns"><a class="btn pri" href="${u}" download="${esc(name)}" style="text-decoration:none">儲存檔案</a><button class="btn" data-close="1">關閉</button></div><p class="muted">iPad：點「儲存檔案」→「下載」，再到「檔案」App 移到 Dropbox 的案件資料夾。</p></div>`;
-  m.addEventListener('click',e=>{if(e.target.dataset.close||e.target===m){m.remove();setTimeout(()=>URL.revokeObjectURL(u),1000)}});
+  m.innerHTML=`<div class="box"><h2 style="margin:0 0 8px;color:var(--pri);font-size:18px">案件檔已準備好</h2><p class="muted">${esc(note)}</p><p style="word-break:break-all">${esc(name)}</p>
+  <div class="btns">${canShare?'<button class="btn pri" data-share="1">儲存到檔案（選資料夾）</button>':''}${canPick?'<button class="btn pri" data-pick="1">選擇資料夾儲存</button>':''}<a class="btn ${canShare||canPick?'':'pri'}" href="${u}" download="${esc(name)}" style="text-decoration:none">${canShare||canPick?'下載':'儲存檔案'}</a><button class="btn" data-close="1">關閉</button></div>
+  <p class="muted">${canShare?'iPad、iPhone：點「儲存到檔案」→ 選「儲存到檔案」→ 切到 Dropbox → 選資料夾 → 儲存。之後會記得上次的資料夾。':canPick?'電腦：點「選擇資料夾儲存」，直接選 Dropbox 裡的資料夾。':'下載後再移到 Dropbox 的案件資料夾。'}</p></div>`;
+  const close=()=>{m.remove();setTimeout(()=>URL.revokeObjectURL(u),1000)};
+  m.addEventListener('click',async e=>{
+    const t=e.target;
+    if(t.dataset.close||t===m){close();return}
+    if(t.dataset.share){try{await navigator.share({files:[file],title:name});close();toast('已送出')}catch(err){if(err&&err.name!=='AbortError')toast('無法開啟分享，請改用「下載」')}return}
+    if(t.dataset.pick){try{const h=await window.showSaveFilePicker({suggestedName:name,types:[{description:'案件檔',accept:{'application/json':['.json']}}]});const w=await h.createWritable();await w.write(blob);await w.close();close();toast('已儲存')}catch(err){if(err&&err.name!=='AbortError')toast('儲存失敗，請改用「下載」')}return}
+  });
   document.body.appendChild(m);
 }
 async function exportCases(arr,name){
