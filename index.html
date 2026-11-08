@@ -1,0 +1,1127 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="陪偵羈押">
+<meta name="theme-color" content="#a83d6b">
+<title>刑事陪偵暨羈押辯護系統</title>
+<style>
+:root{
+  --bg:#fbf5f7; --card:#fff; --ink:#2b1d24; --sub:#7a5f6b; --line:#efd9e2;
+  --pri:#a83d6b; --pri2:#c75b87; --acc:#7b3f8c; --ok:#2f7d4f; --warn:#b7791f; --bad:#b42318;
+  --soft:#fcebf2; --chip:#f7e2ea;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;font-size:17px;line-height:1.55;-webkit-text-size-adjust:100%}
+button,input,select,textarea{font:inherit;color:inherit}
+header{position:sticky;top:0;z-index:20;background:var(--pri);color:#fff;padding:calc(env(safe-area-inset-top) + 8px) 14px 8px;display:flex;align-items:center;gap:8px}
+header h1{font-size:17px;margin:0;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+header button{background:rgba(255,255,255,.14);border:0;color:#fff;border-radius:10px;padding:7px 11px;font-size:15px}
+nav.tabs{position:sticky;top:calc(env(safe-area-inset-top) + 50px);z-index:19;background:#fff;border-bottom:1px solid var(--line);display:flex;overflow-x:auto;gap:4px;padding:6px 8px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+nav.tabs::-webkit-scrollbar{display:none}
+nav.tabs button{flex:0 0 auto;border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 14px;font-size:15px;color:var(--sub)}
+nav.tabs button.on{background:var(--pri);border-color:var(--pri);color:#fff}
+nav.tabs button.jy{border-color:#dcc4e6}
+nav.tabs button.jy.on{background:var(--acc);border-color:var(--acc)}
+main{max-width:900px;margin:0 auto;padding:14px 14px 120px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 14px 6px;margin:0 0 14px}
+.card h2{font-size:18px;margin:0 0 10px;color:var(--pri)}
+.card h3{font-size:16px;margin:14px 0 8px;color:var(--pri2)}
+.jycard h2{color:var(--acc)}
+.row{display:grid;grid-template-columns:1fr;gap:0 14px}
+@media(min-width:640px){.row.c2{grid-template-columns:1fr 1fr}.row.c3{grid-template-columns:1fr 1fr 1fr}}
+label.f{display:block;margin:0 0 12px}
+label.f>span{display:block;font-size:14px;color:var(--sub);margin-bottom:4px}
+input[type=text],input[type=tel],input[type=date],input[type=datetime-local],input[type=number],select,textarea{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px 11px;background:#fff;min-height:44px;-webkit-appearance:none;appearance:none}
+select{background-image:linear-gradient(45deg,transparent 50%,#888 50%),linear-gradient(135deg,#888 50%,transparent 50%);background-position:calc(100% - 18px) 50%,calc(100% - 13px) 50%;background-size:5px 5px;background-repeat:no-repeat;padding-right:30px}
+textarea{min-height:90px;resize:vertical}
+textarea.big{min-height:180px}
+.dt{display:flex;gap:8px}
+.dt input{flex:1}
+.dt button,.btn{border:1px solid var(--pri2);background:#fff;color:var(--pri2);border-radius:10px;padding:9px 13px;min-height:44px;white-space:nowrap}
+.btn.pri{background:var(--pri);border-color:var(--pri);color:#fff}
+.btn.acc{background:var(--acc);border-color:var(--acc);color:#fff}
+.btn.bad{border-color:var(--bad);color:var(--bad)}
+.btn.sm{min-height:36px;padding:5px 10px;font-size:14px}
+.btns{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 12px}
+.opts{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}
+.opts label{display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:10px;padding:8px 11px;background:#fff;min-height:42px}
+.opts label:has(input:checked){background:var(--soft);border-color:var(--pri2)}
+.opts input{width:18px;height:18px;margin:0;accent-color:var(--pri)}
+.ck{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-top:1px dashed var(--line)}
+.ck:first-of-type{border-top:0}
+.ck input[type=checkbox]{width:22px;height:22px;flex:0 0 22px;margin-top:2px;accent-color:var(--ok)}
+.ck .t{flex:1}
+.ck .t small{display:block;color:var(--sub);font-size:13.5px}
+.ck .t input[type=text]{margin-top:6px;min-height:40px}
+.q{padding:10px 0;border-top:1px dashed var(--line)}
+.q:first-of-type{border-top:0}
+.q .ql{display:flex;gap:8px;align-items:flex-start}
+.q .ql input{width:20px;height:20px;flex:0 0 20px;margin-top:3px;accent-color:var(--ok)}
+.q .ql b{font-weight:500}
+.q .ql small{display:block;color:var(--sub);font-size:13.5px}
+.q textarea,.q input[type=text]{margin-top:6px;min-height:40px}
+.q textarea{min-height:60px}
+.note{background:var(--soft);border-left:4px solid var(--pri2);border-radius:8px;padding:10px 12px;margin:0 0 12px;font-size:15px}
+.note.w{background:#fff6ea;border-color:var(--warn)}
+.note.b{background:#fdecea;border-color:var(--bad)}
+.note.g{background:#eaf6ef;border-color:var(--ok)}
+.note p{margin:4px 0}
+.law{font-size:14px;color:var(--sub)}
+.chip{display:inline-block;background:var(--chip);border-radius:999px;padding:2px 10px;font-size:13.5px;margin:2px 4px 2px 0}
+.chip.r{background:#fde4d8;color:#8a3412}
+.chip.g{background:#dff1e6;color:#1f5e3a}
+.chip.y{background:#fff1cc;color:#7a5600}
+.big-num{font-size:26px;font-weight:700}
+.clock-res{border-radius:12px;padding:12px;margin:0 0 12px}
+.clock-res.ok{background:#eaf6ef}
+.clock-res.bad{background:#fdecea}
+.list .item{display:flex;gap:10px;align-items:center;padding:12px;border:1px solid var(--line);border-radius:12px;background:#fff;margin:0 0 10px}
+.list .item .m{flex:1;min-width:0}
+.list .item .m b{display:block}
+.list .item .m small{color:var(--sub)}
+.tag{font-size:12.5px;border-radius:6px;padding:2px 7px;color:#fff;background:var(--pri2)}
+.tag.jy{background:var(--acc)}
+table.lib{width:100%;border-collapse:collapse;font-size:15px}
+table.lib td{border-top:1px solid var(--line);padding:6px 4px;vertical-align:top}
+details{border:1px solid var(--line);border-radius:12px;background:#fff;margin:0 0 10px;padding:0 12px}
+details summary{padding:12px 0;font-weight:600;cursor:pointer}
+details[open] summary{border-bottom:1px solid var(--line);margin-bottom:8px}
+.obs{border:1px solid var(--line);border-radius:10px;padding:10px;margin:0 0 10px;background:#fafbfc}
+.court-view{position:fixed;inset:0;z-index:50;background:#111;color:#f3f3f3;overflow:auto;padding:calc(env(safe-area-inset-top) + 14px) 18px 40px;display:none}
+.court-view.on{display:block}
+.court-view .ctl{position:sticky;top:0;display:flex;gap:8px;justify-content:flex-end;padding-bottom:10px;background:#111}
+.court-view .ctl button{background:#333;color:#fff;border:0;border-radius:10px;padding:9px 14px}
+.court-view .txt{font-size:24px;line-height:1.75;white-space:pre-wrap;max-width:1000px;margin:0 auto}
+.toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 24px);transform:translateX(-50%);background:#222;color:#fff;padding:10px 16px;border-radius:999px;font-size:15px;opacity:0;transition:.25s;z-index:60;pointer-events:none}
+.toast.on{opacity:.95}
+.muted{color:var(--sub);font-size:14px}
+hr.s{border:0;border-top:1px solid var(--line);margin:12px 0}
+#printArea{display:none}
+.lockbox{max-width:360px;margin:12vh auto 0;text-align:center}
+.lockbox input{text-align:center;font-size:24px;letter-spacing:6px}
+.modal{position:fixed;inset:0;z-index:70;background:rgba(40,20,30,.45);display:flex;align-items:center;justify-content:center;padding:20px}
+.modal .box{background:#fff;border-radius:16px;padding:18px;max-width:420px;width:100%}
+.item .chip{font-size:12px}
+
+/* ===== 列印表單 ===== */
+@page{size:A4;margin:14mm 14mm 12mm}
+@media print{
+  body{background:#fff}
+  header,nav.tabs,main,.toast,.court-view{display:none!important}
+  #printArea{display:block}
+  .pg{page-break-after:always;break-after:page}
+  .pg:last-child{page-break-after:auto;break-after:auto}
+}
+.pg{font-family:"BiauKai","DFKai-SB","標楷體","Kaiti TC","STKaiti","Noto Serif TC","Songti TC",serif;color:#000;font-size:12pt;line-height:1.5}
+.pg .ttl{text-align:center;font-size:17pt;font-weight:700;letter-spacing:2px;margin:0 0 6px}
+.pg .ttl2{text-align:center;font-size:15pt;font-weight:700;margin:0 0 8px}
+.pg table.f{width:100%;border-collapse:collapse;border:2px solid #000}
+.pg table.f td{border:1px solid #000;padding:5px 6px;vertical-align:middle}
+.pg table.f td.h{text-align:center;background:#fff}
+.pg table.fx{table-layout:fixed}
+.pg table.fx td{padding:3px 5px;word-break:break-all}
+.pg .box{white-space:nowrap}
+.pg .sm{font-size:9.5pt}
+.pg .thick{border:3px solid #000!important}
+.pg .box{display:inline-block;width:11pt;height:11pt;border:1px solid #000;vertical-align:-1pt;margin-right:2px;text-align:center;line-height:10pt;font-size:10pt;font-family:Arial,sans-serif}
+.pg .u{border-bottom:1px solid #000;padding:0 6px;display:inline-block;min-width:40px}
+.pg .r{text-align:right}
+.pg .c{text-align:center}
+.pg .sm{font-size:10pt}
+.pg .ver{text-align:right;font-size:9pt;margin-top:4px}
+.pg .txtblk{white-space:pre-wrap}
+.pg .sig{margin-top:16px;text-align:right}
+.pg .doc p{margin:0 0 6px;text-indent:0}
+.pg .doc .ind{padding-left:2em}
+.pg .doc h4{font-size:13pt;margin:10px 0 4px}
+.pg .date{display:flex;justify-content:space-between;margin-top:18px;font-size:13pt;letter-spacing:4px}
+.prev{background:#8a8f98;padding:12px 8px;border-radius:12px;overflow-x:auto}
+.prev .pg{background:#fff;width:210mm;max-width:none;margin:0 auto 12px;padding:12mm;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+</style>
+</head>
+<body>
+<header>
+  <button id="hBack" aria-label="案件列表">☰</button>
+  <h1 id="hTitle">刑事陪偵暨羈押辯護系統</h1>
+  <button id="hLock" style="display:none" aria-label="鎖定">🔒</button>
+  <button id="hLib">案由庫</button>
+</header>
+<nav class="tabs" id="tabs" style="display:none"></nav>
+<main id="main"></main>
+<div id="printArea"></div>
+<div class="court-view" id="courtView"><div class="ctl"><button id="cvSmall">字小</button><button id="cvBig">字大</button><button id="cvClose">關閉</button></div><div class="txt" id="cvText"></div></div>
+<div class="toast" id="toast"></div>
+<script>
+/* ================== 資料：案由庫 ==================
+   條文已於 2026-11-08 以全國法規資料庫核對；修法時請更新此處。 */
+const LAB_CATS = ['殺人','重傷害','強制性交','擄人勒贖','毒品(製造)','強盜','偽造有價證券','偽造貨幣','貪污','組織犯罪','瀆職','槍砲'];
+
+const CRIMES = [
+ {k:'drug',n:'毒品',lab:['毒品(製造)'],
+  laws:[
+   ['毒品條例§4 製造運輸販賣','一級：死刑或無期徒刑；二級：無期或10年以上；三級：7年以上；四級：5年以上12年以下','重'],
+   ['毒品條例§10 施用','一級：6月以上5年以下；二級：3年以下',''],
+   ['毒品條例§11 持有','一級3年以下、二級2年以下；達一定純質淨重者加重',''],
+   ['毒品條例§17','I 供出來源因而查獲正犯或共犯→減免；II 偵查及歷次審判均自白→減輕','']],
+  pre:'§101-1 I ⑩（毒品條例§4 I～IV）',
+  heavy:'製造、運輸、販賣一～四級毒品均為最輕本刑5年以上之重罪',
+  q:['毒品種類、數量、扣案純度（是否為自己施用）','毒品來源（上手）及交易對象，是否願供出來源（§17 I）','交易方式、對話紀錄、交易次數、金額','是否本人施用、最近施用時間、是否驗尿','手機是否已扣押、密碼是否提供','偵查中是否自白（§17 II 須偵審均自白）'],
+  d:['重罪不得作為唯一羈押理由（釋字665號），須另有相當理由認有逃亡或串證之虞','上下游已查獲或已供出，手機、帳戶均已扣案，證據已固定','如屬供自己施用之少量，爭執販賣意圖，罪名不應以§4論']},
+ {k:'fraud',n:'詐欺（車手、收簿、面交）',lab:[],
+  laws:[
+   ['刑法§339','5年以下',''],
+   ['刑法§339-4 加重詐欺','1年以上7年以下（三人以上、冒用公務員、網路散布、深偽）',''],
+   ['詐欺條例§43','獲取達100萬：3年以上10年以下；達1000萬：5年以上12年以下；達1億：7年以上','重*'],
+   ['詐欺條例§44','§339-4 I②並犯①③④款、境外設備、利用未成年／外籍人士等→加重其刑二分之一',''],
+   ['洗錢防制法§19','洗錢未達1億：6月以上5年以下；達1億：3年以上10年以下',''],
+   ['組織條例§3 I','發起、主持、操縱、指揮：3年以上10年以下；參與：6月以上5年以下','']],
+  pre:'§101-1 I ⑦（刑法§339、§339-4、詐欺條例§43、§44）',
+  heavy:'原則非重罪；詐欺條例§43 獲取達1000萬以上者為最輕本刑5年以上',
+  q:['擔任何種角色（車手、收水、收簿、面交、監控）','如何加入、何人介紹、上手的聯絡方式與暱稱','參與期間、次數、經手金額、報酬','被害人數及金額，是否願意和解賠償','通訊軟體群組是否已退出、帳號是否交出','手機、帳戶、提款卡是否已扣押','是否知悉為詐欺（主觀犯意）'],
+  d:['集團已遭破獲、上游水房車手均已查獲，犯罪組織已瓦解（114抗2997意旨）','犯罪工具（手機、人頭帳戶）均已扣押，已退出群組','本案為單一、一次性犯行，非長期反覆','共犯均已到案、證人已訊問完畢，無勾串可能','坦承犯行、願與被害人和解，有固定住居所']},
+ {k:'theft',n:'竊盜',lab:[],
+  laws:[['刑法§320','5年以下',''],['刑法§321 加重竊盜','6月以上5年以下','']],
+  pre:'§101-1 I ⑤（§320、§321）',heavy:'非重罪',
+  q:['前科情形（竊盜次數、最近一次執行完畢時間→累犯）','竊得物品去向、是否已返還或賠償','犯罪動機、經濟狀況、是否有毒癮','固定住居所、工作','本次是否單一犯行'],
+  d:['反覆實施之虞須有具體事證，不得僅以前科推論','已返還贓物、與被害人和解','有固定住居所與家人監督，生活環境已改變']},
+ {k:'rob',n:'搶奪、強盜',lab:['強盜'],
+  laws:[['刑法§325 搶奪','6月以上5年以下',''],['刑法§328 強盜','5年以上','重'],['刑法§330 加重強盜','7年以上','重']],
+  pre:'§101-1 I ⑥',heavy:'強盜、加重強盜為最輕本刑5年以上之重罪',
+  q:['行為方式（強暴脅迫程度是否達不能抗拒）','是否攜帶兇器','財物去向','共犯情形'],
+  d:['爭執行為未達「至使不能抗拒」，應僅論搶奪或恐嚇取財','重罪不得作為唯一羈押理由（釋字665號）']},
+ {k:'kill',n:'殺人',lab:['殺人'],
+  laws:[['刑法§271','死刑、無期徒刑或10年以上；未遂罰之','重'],['刑法§277 II 傷害致死','無期或7年以上','重']],
+  pre:'§101-1 I ②（§271 I、II）',heavy:'重罪；既遂案件屬國民法官法適用案件',
+  q:['事發經過、雙方關係、衝突起因','使用工具、攻擊部位、次數（判斷殺人或傷害犯意）','事後行為（是否報警、救助、逃離）','精神狀況、飲酒用藥情形（§19）','被害人傷勢'],
+  d:['犯意爭執屬實體問題，羈押審查中主要仍應聚焦於羈押原因與必要性','事後主動報警、救助、在場等候，無逃亡之虞','重罪不得作為唯一羈押理由（釋字665號）']},
+ {k:'hurt',n:'傷害、重傷',lab:['重傷害'],
+  laws:[['刑法§277 I 傷害','5年以下、拘役或罰金',''],['刑法§277 II','致死：無期或7年以上；致重傷：3年以上10年以下','重*'],['刑法§278 重傷','5年以上12年以下','重']],
+  pre:'§101-1 I ②（§277 I、§278 I）',heavy:'普通傷害非重罪；重傷、傷害致死為重罪',
+  q:['衝突起因、雙方關係','被害人傷勢（是否達重傷）','是否願意和解'],
+  d:['§277 I 普通傷害為告訴乃論，告訴撤回即不得預防性羈押（§101-1 I ②但書）','已和解或有和解意願']},
+ {k:'gun',n:'槍砲彈藥',lab:['槍砲'],
+  laws:[['槍砲條例§7','製造販賣運輸：無期或7年以上；持有寄藏：5年以上','重'],['槍砲條例§8','製造販賣運輸：無期或5年以上；持有寄藏：3年以上10年以下','重*'],['槍砲條例§12 子彈','製造販賣運輸：1年以上7年以下；持有：5年以下','']],
+  pre:'§101-1 I ⑨（§7、§8、§9-1、§12、§13、§13-1）',heavy:'§7 各項、§8 製造販賣為重罪',
+  q:['槍枝、子彈來源','是否具殺傷力（待鑑定）','持有期間、用途','是否供出來源（減刑規定）'],
+  d:['殺傷力尚待鑑定','槍彈均已扣案，無再犯之工具']},
+ {k:'org',n:'組織犯罪',lab:['組織犯罪'],
+  laws:[['組織條例§3 I 前段','發起、主持、操縱、指揮：3年以上10年以下',''],['組織條例§3 I 後段','參與：6月以上5年以下；情節輕微得減免','']],
+  pre:'§101-1 I ⑫（僅§3 I 前段）',heavy:'非重罪',
+  q:['在組織中的角色、層級','加入時間、是否已脫離'],
+  d:['僅屬參與者，非§101-1 I ⑫所列之發起主持者，不得預防性羈押']},
+ {k:'sex',n:'妨害性自主',lab:['強制性交'],
+  laws:[['刑法§221','3年以上10年以下',''],['刑法§222 加重','7年以上','重'],['刑法§224 強制猥褻','6月以上5年以下',''],['刑法§227','對未滿14歲性交：3年以上10年以下；14～16歲性交：7年以下','']],
+  pre:'§101-1 I ②（告訴乃論未告訴或已撤回者除外）',heavy:'§222 加重強制性交為重罪',
+  q:['雙方關係、事發經過、是否合意','被害人年齡','是否有對話紀錄、影像','與被害人是否同住或易接觸'],
+  d:['願遵守不得接觸、騷擾被害人（§116-2 I ②）','遷離與被害人同一住所']},
+ {k:'dv',n:'家暴、違反保護令',lab:[],
+  laws:[['家暴法§61 違反保護令','3年以下、拘役或罰金',''],['家暴法§30-1','違反保護令罪、家庭成員間故意實施家暴之罪，有反覆實行之虞者得羈押','']],
+  pre:'家暴法§30-1（獨立之預防性羈押規定）',heavy:'非重罪；最重本刑3年以下（留意§114 ①）',
+  q:['保護令種類、內容、核發及送達日期','違反的具體行為','與被害人關係、是否同住','飲酒情形','子女狀況、能否搬離'],
+  d:['§114 ①：最重本刑3年以下，經具保聲請停止羈押不得駁回（但書例外；依家暴法§30-1羈押時之適用，宜另查實務見解）','可遷出、另有住處，並遵守遠離令']},
+ {k:'corrupt',n:'貪污',lab:['貪污'],
+  laws:[['貪污條例§4','無期或10年以上','重'],['貪污條例§5','7年以上','重'],['貪污條例§6','5年以上','重']],
+  pre:'無',heavy:'重罪',
+  q:['職務內容、經手事項','款項流向','共犯及證人（同事、廠商）'],
+  d:['相關書證已扣押，證人均已訊問','重罪不得作為唯一羈押理由（釋字665號）']},
+ {k:'vote',n:'選舉罷免（賄選）',lab:[],
+  laws:[['選罷法§99 I','3年以上10年以下；偵查中自白減輕','']],
+  pre:'無',heavy:'非重罪（最輕本刑3年）',
+  q:['交付對象、金額、時間','受賄者是否已到案、證述內容','與候選人關係'],
+  d:['受賄者均已訊問完畢，無勾串可能','偵查中自白得減輕其刑']},
+ {k:'dui',n:'公共危險（酒駕、肇逃）',lab:[],
+  laws:[['刑法§185-3 I','3年以下，得併科30萬元以下罰金',''],['刑法§185-3 II','致死：3年以上10年以下；致重傷：1年以上7年以下',''],['刑法§185-3 III','10年內再犯致死：無期或5年以上','重'],['刑法§185-4 肇逃','致傷：6月以上5年以下；致死或重傷：1年以上7年以下','']],
+  pre:'§101-1 I ①（§185-3 已列入）',heavy:'§185-3 III 為重罪；致死案件可能適用國民法官法',
+  q:['酒測值、測試時間與方式','飲酒時間、地點、數量','前案紀錄（10年內有無酒駕判決或緩起訴）','事故後是否停車、留在現場、報警','有無賠償意願'],
+  d:['§185-3 現已列入§101-1預防性羈押罪名，舊資料「酒駕不得預防性羈押」已不適用','§185-3 I 最重本刑3年以下，但依§101-1羈押者不適用§114 ①','事故後停車、留在現場，無逃亡之虞','可交出車輛、吊扣駕照以降低再犯風險']},
+ {k:'threat',n:'恐嚇、強制、妨害自由',lab:[],
+  laws:[['刑法§305 恐嚇危害安全','2年以下',''],['刑法§304 強制','3年以下',''],['刑法§302 剝奪行動自由','5年以下',''],['刑法§346 恐嚇取財','6月以上5年以下','']],
+  pre:'§101-1 I ③④⑧',heavy:'非重罪（擄人勒贖§347除外）',
+  q:['行為內容、對象、次數','與被害人關係','有無持凶器'],
+  d:['§305、§304 最重本刑3年以下，§114 ①（但依§101-1羈押者除外）']},
+ {k:'stalk',n:'跟蹤騷擾',lab:[],
+  laws:[['跟騷法§18 I','1年以下（告訴乃論）',''],['跟騷法§18 II 攜帶凶器','5年以下',''],['跟騷法§21','犯§18 II、§19之罪，有反覆實行之虞得羈押','']],
+  pre:'跟騷法§21',heavy:'非重罪',
+  q:['行為態樣、期間、次數','是否已核發保護令','與被害人關係'],
+  d:['§18 I 不在跟騷法§21預防性羈押範圍內']},
+ {k:'other',n:'其他／罪名不明',lab:[],laws:[],pre:'',heavy:'',q:[],d:[]}
+];
+
+/* §101-1 I 各款 */
+const PRE_ITEMS=['①放火、劫持交通工具、不能安全駕駛','②性侵害、殺人、傷害、重傷、性影像、兒少性剝削、性騷擾','③買賣人口、妨害自由','④強制、恐嚇危害安全','⑤竊盜','⑥搶奪、強盜、海盜','⑦詐欺、加重詐欺、詐欺條例§43§44','⑧恐嚇取財、擄人勒贖','⑨槍砲條例§7§8§9-1§12§13§13-1','⑩毒品條例§4 I～IV','⑪人口販運防制法§32','⑫組織條例§3 I前段'];
+
+/* 進案類型 */
+const ENTRIES={
+ inv:{n:'偵查中檢察官聲請羈押',tips:['拘捕前置：須先經合法拘提或逮捕（§93 II）','自拘捕時起24小時內聲請，扣除§93-1法定障礙','§31-1：偵查中羈押審查未選任辯護人者應指定辯護；等候逾4小時被告主動請求得逕行訊問','§33-1：辯護人得檢閱卷宗證物並抄錄、攝影；另行分卷禁止獲知者不得作為羈押依據（§93 II但書、§101 III）','§101 IV：可請求法官給予適當時間準備答辯','§93 V：深夜（23時至翌日8時）可請求翌日日間訊問']},
+ trial:{n:'起訴移審（審判中）',tips:['移審後由法院訊問決定是否繼續羈押','否認犯罪、爭執罪名屬實體問題，法院通常認與羈押無必然關係，應聚焦羈押原因及必要性','預防性羈押之「反覆實行之虞」事實不以本案為限，留意檢方引用他案']},
+ ext:{n:'延長羈押',tips:['§108 I：偵查中檢察官至遲於期滿5日前聲請；偵查中延長以1次2個月為限（§108 V）','審查重點：原羈押原因是否仍存在、有無繼續羈押必要','區分撤銷羈押（原因消滅，§107）與停止羈押（仍有原因但無必要，以具保等替代）','家庭、工作因素實務上多認與羈押必要性無涉，應搭配原因消滅或替代手段主張','延押裁定未於期滿前合法送達者視為撤銷羈押（§108 II）']},
+ bail:{n:'具保停止羈押聲請',tips:['§110：被告、辯護人得隨時具保聲請停止羈押','§114：有該條各款情形，具保聲請停止羈押不得駁回','其餘情形法院有裁量權，回到比例原則','具體提出保證金額、限制住居地址、報到等條件（§111、§116-2）']},
+ habeas:{n:'提審聲請併羈押聲請',tips:['提審審查逮捕拘禁之合法性（提審法§1）','提審與羈押聲請同時繫屬時，高院114年法律座談會刑事類提案第24號採先審提審','提審期間不計入24小時（§93-1 I ⑧）','留意法院仍應核發提審票並通知逮捕拘禁機關']}
+};
+
+/* 陪訊檢核 */
+const PZ_CHECK=[
+ {g:'出發前',items:[
+  ['pc1','確認地點（分局／派出所／地檢署）、承辦人、案由'],
+  ['pc2','確認受詢問人身分：原住民、疑似身心障礙、外籍（是否需通譯）'],
+  ['pc3','攜帶空白委任狀、陪訊案件記錄表、法扶申請書、解除委任陳報狀'],
+  ['pc4','記錄出發時間（記錄表粗框欄位，與酬金有關，填到「分」）']]},
+ {g:'到場、律見',items:[
+  ['pm1','表明法扶指派律師身分，說明律師角色與保密'],
+  ['pm2','當事人簽署偵查中辯護專用委任狀，交承辦人附卷'],
+  ['pm3','律見時間：受拘捕者不得逾1小時、以1次為限，接見時間不計入24小時','§34 II'],
+  ['pm4','了解案情：為何被帶來、被查扣什麼、已說過什麼'],
+  ['pm5','說明權利：緘默權、選任辯護人、請求調查有利證據','§95 I'],
+  ['pm6','說明夜間詢問：日落後日出前得拒絕詢問，同意後也可隨時要求停止','§100-3'],
+  ['pm7','提醒筆錄要逐字看過，不符可要求更正，不同意可拒絕簽名'],
+  ['pm8','身心障礙者：應有輔佐人或社工陪同在場','§35 III'],
+  ['pm9','外籍人士：確認通譯到場及語言是否通曉']]},
+ {g:'詢（訊）問中',items:[
+  ['pq1','是否告知罪名（罪名變更應再告知）','§95 I ①'],
+  ['pq2','是否全程連續錄音（必要時錄影）','§100-1'],
+  ['pq3','有無誘導、利誘、疲勞或不當訊問'],
+  ['pq4','筆錄記載與陳述是否相符，扣押物清點是否正確'],
+  ['pq5','記錄詢問開始、結束時間（警詢、偵訊各段）']]},
+ {g:'結束',items:[
+  ['pe1','確認是否移送地檢署、檢察官是否聲請羈押'],
+  ['pe2','告知後續程序（傳喚、起訴、法扶後續申請）'],
+  ['pe3','詢問是否申請法扶後續扶助；要申請者填申請書'],
+  ['pe4','記錄完成時間（回到家或事務所）'],
+  ['pe5','一週內於扶助律師線上操作系統回報：記錄表、委任狀、申請書']]}
+];
+
+/* 閱卷檢核（依羈押審查庭筆記） */
+const READ_CHECK=[
+ {g:'檢方羈押聲請書：人',items:[
+  ['r1','當事人姓名、年籍、個資是否正確；年齡（少年→少年觀護所）'],
+  ['r2','重要共同被告有哪些、是否均已到案、是否已受羈押']]},
+ {g:'事',items:[
+  ['r3','涉犯罪名與刑度：是否5年以上重罪、3年以下輕罪'],
+  ['r4','檢方適用的罪名是否正確'],
+  ['r5','犯罪事實經過摘要'],
+  ['r6','拘提或逮捕之過程']]},
+ {g:'時、地、物',items:[
+  ['r7','拘提、逮捕時間；是否上銬、何時開始限制人身自由'],
+  ['r8','到警局、移送地檢、到院時間'],
+  ['r9','拘捕地點（移送報告書寫「警局」但犯罪地不在警局→期間可能漏算，應回溯自現場起算）'],
+  ['r10','是否搜索扣押、扣押何物']]},
+ {g:'筆錄、票、照片',items:[
+  ['r11','當事人警詢及偵訊筆錄（注意詢問時間：夜間？）'],
+  ['r12','共同被告警詢及偵訊筆錄，與當事人說法有無出入'],
+  ['r13','其他被告羈押筆錄'],
+  ['r14','搜索扣押筆錄'],
+  ['r15','拘票、逮捕過程紀錄（逕行拘提事由§76、緊急拘提§88-1 須補票）'],
+  ['r16','扣押物照片、手機翻拍照片'],
+  ['r17','有無另行分卷、禁止獲知之卷證（不得作為羈押依據）','§93 II但書、§101 III']]}
+];
+
+/* 律見問題（羈押） */
+const MEET_Q=[
+ {g:'先請當事人主動陳述',items:[
+  ['m1','身分、個資記載是否正確'],
+  ['m2','是否知道自己為何被捕'],
+  ['m3','從被拘提或逮捕到院的具體過程（時間、地點、是否上銬、何時開始不能離開）'],
+  ['m4','簡述本案經過'],
+  ['m5','警詢、偵訊時說了什麼，筆錄與實際陳述有無不符'],
+  ['m6','是否夜間被詢問、是否同意、有無要求休息']]},
+ {g:'逃亡之虞相關',items:[
+  ['mf1','戶籍與實際居住地址、與誰同住'],
+  ['mf2','工作（雇主、地點、多久）'],
+  ['mf3','家庭狀況（配偶、子女、需扶養者）'],
+  ['mf4','有無通緝紀錄、前科、目前是否另案在執行或假釋中'],
+  ['mf5','有無護照、海外親屬資產、近期出國紀錄'],
+  ['mf6','被捕時有無逃跑、反抗']]},
+ {g:'串證滅證之虞相關',items:[
+  ['ms1','共犯是誰、是否已到案'],
+  ['ms2','證人是誰、與當事人關係'],
+  ['ms3','手機、電腦、帳戶是否已扣押'],
+  ['ms4','是否已退出相關群組、刪除聯絡方式']]},
+ {g:'反覆實施之虞相關',items:[
+  ['mr1','過去同類案件（時間、結果）'],
+  ['mr2','犯罪動機（經濟、毒癮、他人指使）'],
+  ['mr3','目前與犯罪環境的聯繫是否已切斷']]},
+ {g:'替代手段',items:[
+  ['mb1','可負擔的具保金額、誰可以幫忙繳'],
+  ['mb2','可責付的人（家屬、雇主），聯絡電話'],
+  ['mb3','限制住居地址（最好是與家人同住處）'],
+  ['mb4','是否同意限制出境出海、定期報到、科技設備監控'],
+  ['mb5','身體狀況、疾病、服藥；女性：是否懷孕（§114）']]},
+ {g:'說明事項',items:[
+  ['mx1','說明開庭程序、法官可能問的問題'],
+  ['mx2','如被羈押：要通知誰、需要哪些生活用品、是否需要律師接見'],
+  ['mx3','救濟：抗告期間10日，自送達裁定後起算（§406）'],
+  ['mx4','羈押期間：偵查中2個月，延長以1次2個月為限'],
+  ['mx5','撤銷羈押（原因消滅）與停止羈押（具保、責付、限制住居）的差別'],
+  ['mx6','法扶後續申請（偵查辯護、對羈押裁定提起抗告）']]}
+];
+
+/* 爭點事實（產生陳述用） */
+const ARG={
+ flee:[['f1','有固定住居所，並與家人同住'],['f2','有固定工作，能具體說明工作內容'],['f3','無通緝紀錄，亦無逃亡前科'],['f4','無海外資產或長期居留管道'],['f5','遭逮捕時並未逃跑或反抗'],['f6','已坦承犯行，願意面對司法程序'],['f7','願交出護照、配合限制出境出海'],['f8','願定期至指定派出所報到'],['f9','本案情節非重、損害不大（如未遂）'],['f10','年紀尚輕且無前科']],
+ coll:[['c1','共犯均已到案（或已起訴、判決）'],['c2','相關證人均已經檢察官訊問完畢'],['c3','手機、電腦、帳戶資料均已扣押'],['c4','已退出相關群組、與其他成員斷絕聯絡'],['c5','被告供述與共犯供述相符'],['c6','犯罪現場蒐證已完備，證據已固定'],['c7','願遵守不得接觸共犯、被害人及證人之條件']],
+ rep:[['p1','犯罪集團已遭破獲、成員均已查獲，組織形同瓦解'],['p2','犯罪工具（手機、人頭帳戶等）均已扣押'],['p3','已退出群組、刪除相關聯絡方式'],['p4','本案為單一、一次性犯行，非長期多次反覆'],['p5','並無同類前案紀錄'],['p6','生活環境已改變（家人監督、穩定工作）']]
+};
+
+/* ================== 工具 ================== */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const pad=n=>String(n).padStart(2,'0');
+function nowLocal(){const d=new Date();return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`}
+function todayStr(){return nowLocal().slice(0,10)}
+function getP(o,p){return p.split('.').reduce((a,k)=>a==null?undefined:a[k],o)}
+function setP(o,p,v){const ks=p.split('.');let a=o;ks.slice(0,-1).forEach(k=>{if(a[k]==null||typeof a[k]!=='object')a[k]={};a=a[k]});a[ks[ks.length-1]]=v}
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('on'),1800)}
+function pd(s){if(!s)return null;const d=new Date(s.length===10?s+'T00:00':s);return isNaN(d)?null:d}
+function roc(s){const d=pd(s);if(!d)return {y:'',m:'',d:'',h:'',mi:''};return {y:d.getFullYear()-1911,m:d.getMonth()+1,d:d.getDate(),h:d.getHours(),mi:pad(d.getMinutes())}}
+function rocDate(s){const r=roc(s);return r.y?`${r.y}年${r.m}月${r.d}日`:''}
+function rocDT(s){const r=roc(s);return r.y?`${r.y}年${r.m}月${r.d}日${r.h}時${r.mi}分`:''}
+function fmtDT(d){return d?`${d.getFullYear()-1911}/${d.getMonth()+1}/${d.getDate()} ${pad(d.getHours())}:${pad(d.getMinutes())}`:''}
+function fmtD(d){return d?`${d.getFullYear()-1911}年${d.getMonth()+1}月${d.getDate()}日`:''}
+function addDays(d,n){const x=new Date(d);x.setDate(x.getDate()+n);return x}
+function addMonths(d,n){const x=new Date(d);const day=x.getDate();x.setDate(1);x.setMonth(x.getMonth()+n);const last=new Date(x.getFullYear(),x.getMonth()+1,0).getDate();x.setDate(Math.min(day,last));return x}
+function hm(ms){const neg=ms<0;ms=Math.abs(ms);const h=Math.floor(ms/3600000),m=Math.round((ms%3600000)/60000);return (neg?'-':'')+h+'小時'+m+'分'}
+const crimeOf=c=>CRIMES.find(x=>x.k===c.crime)||null;
+
+/* ================== 儲存 ================== */
+const KEY='pzjy_cases_v1', SKEY='pzjy_settings_v1';
+let cases={}, cur=null, tab='basic', view='list';
+let settings={autoLock:'5',retain:'30',lawyer:'陳懿璿',office:'台東市浙江路68號1樓',officeFull:'台東縣台東市浙江路68號1樓',phone:'089-333-648',branch:'台東',court:'臺灣臺東地方法院',high:'臺灣高等法院花蓮分院'};
+/* ===== 加密 ===== */
+const ENC_KEY='pzjy_enc_v1';
+let sessKey=null,sessSalt=null,locked=false,saveChain=Promise.resolve();
+function b64e(buf){const u=new Uint8Array(buf);let t='';for(let i=0;i<u.length;i+=0x8000)t+=String.fromCharCode.apply(null,u.subarray(i,i+0x8000));return btoa(t)}
+function b64d(t){const b=atob(t),u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);return u}
+async function deriveKey(pw,salt){const base=await crypto.subtle.importKey('raw',new TextEncoder().encode(pw),'PBKDF2',false,['deriveKey']);return crypto.subtle.deriveKey({name:'PBKDF2',salt,iterations:310000,hash:'SHA-256'},base,{name:'AES-GCM',length:256},false,['encrypt','decrypt'])}
+async function encStr(key,salt,str){const iv=crypto.getRandomValues(new Uint8Array(12));const ct=await crypto.subtle.encrypt({name:'AES-GCM',iv},key,new TextEncoder().encode(str));return {salt:b64e(salt),iv:b64e(iv),data:b64e(ct)}}
+async function decBlob(key,blob){const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:b64d(blob.iv)},key,b64d(blob.data));return JSON.parse(new TextDecoder().decode(pt))}
+async function encPw(pw,obj){const salt=crypto.getRandomValues(new Uint8Array(16));return encStr(await deriveKey(pw,salt),salt,JSON.stringify(obj))}
+async function decPw(pw,blob){return decBlob(await deriveKey(pw,b64d(blob.salt)),blob)}
+function load(){
+  try{Object.assign(settings,JSON.parse(localStorage.getItem(SKEY)||'{}'))}catch(e){}
+  if(localStorage.getItem(ENC_KEY)){locked=true;cases={};view='lock';return}
+  try{cases=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){cases={}}
+}
+function save(){
+  if(cur){cur.updated=Date.now();cases[cur.id]=cur}
+  if(locked)return;
+  if(sessKey){const k=sessKey,sl=sessSalt,snap=JSON.stringify(cases);
+    saveChain=saveChain.then(async()=>{const blob=await encStr(k,sl,snap);localStorage.setItem(ENC_KEY,JSON.stringify(blob))}).catch(()=>toast('儲存失敗'));return}
+  try{localStorage.setItem(KEY,JSON.stringify(cases))}catch(e){toast('儲存失敗：裝置空間不足')}
+}
+async function unlock(pin){
+  try{const blob=JSON.parse(localStorage.getItem(ENC_KEY));const salt=b64d(blob.salt);const key=await deriveKey(pin,salt);
+    cases=await decBlob(key,blob);sessKey=key;sessSalt=salt;locked=false;view='list';cur=null;lastAct=Date.now();render();toast('已解鎖')}
+  catch(e){toast('密碼錯誤');const i=$('#pinIn');if(i){i.value='';i.focus()}}
+}
+async function lockNow(){
+  if(!sessKey)return;
+  try{await saveChain}catch(e){}
+  sessKey=null;sessSalt=null;cases={};cur=null;locked=true;view='lock';
+  $('#courtView').classList.remove('on');document.querySelector('.modal')?.remove();render();window.scrollTo(0,0);
+}
+async function setPin(pin){
+  const salt=crypto.getRandomValues(new Uint8Array(16));const key=await deriveKey(pin,salt);
+  const blob=await encStr(key,salt,JSON.stringify(cases));localStorage.setItem(ENC_KEY,JSON.stringify(blob));localStorage.removeItem(KEY);
+  sessKey=key;sessSalt=salt;
+}
+function removePin(){
+  localStorage.setItem(KEY,JSON.stringify(cases));localStorage.removeItem(ENC_KEY);sessKey=null;sessSalt=null;
+}
+let lastAct=Date.now(),hiddenAt=0;
+['click','input','touchstart','keydown'].forEach(ev=>document.addEventListener(ev,()=>{lastAct=Date.now()},{passive:true,capture:true}));
+setInterval(()=>{const m=Number(settings.autoLock)||0;if(sessKey&&m>0&&Date.now()-lastAct>m*60000)lockNow()},20000);
+document.addEventListener('visibilitychange',()=>{const m=Number(settings.autoLock)||0;if(document.hidden){hiddenAt=Date.now()}else if(sessKey&&m>0&&hiddenAt&&Date.now()-hiddenAt>m*60000)lockNow()});
+const maskName=n=>n?n[0]+'○'.repeat(Math.max(1,n.length-1)):'未命名';
+const fileTag=c=>`${todayStr().replace(/-/g,'').slice(2)}-${maskName(c.name)}-${c.type==='pz'?'陪偵':'羈押'}`;
+function showDownload(name,text,note){
+  const u=URL.createObjectURL(new Blob([text],{type:'application/json'}));
+  const m=document.createElement('div');m.className='modal';
+  m.innerHTML=`<div class="box"><h2 style="margin:0 0 8px;color:var(--pri);font-size:18px">案件檔已準備好</h2><p class="muted">${esc(note)}</p><p style="word-break:break-all">${esc(name)}</p><div class="btns"><a class="btn pri" href="${u}" download="${esc(name)}" style="text-decoration:none">儲存檔案</a><button class="btn" data-close="1">關閉</button></div><p class="muted">iPad：點「儲存檔案」→「下載」，再到「檔案」App 移到 Dropbox 的案件資料夾。</p></div>`;
+  m.addEventListener('click',e=>{if(e.target.dataset.close||e.target===m){m.remove();setTimeout(()=>URL.revokeObjectURL(u),1000)}});
+  document.body.appendChild(m);
+}
+async function exportCases(arr,name){
+  if(!arr.length){toast('沒有案件');return}
+  const pw=prompt('設定案件檔密碼（至少6碼）。\n開啟此檔時需要這組密碼，遺失無法救回。\n留空表示不加密。');
+  if(pw===null)return;
+  let payload,note;
+  if(pw){if(pw.length<6){toast('密碼至少6碼');return}
+    const pw2=prompt('再輸入一次密碼');if(pw2!==pw){toast('兩次密碼不同，未匯出');return}
+    toast('加密中…');payload={app:'pzjy',v:2,enc:await encPw(pw,{cases:arr})};note='已加密，匯入時需輸入密碼。'}
+  else{if(!confirm('不加密匯出？任何拿到檔案的人都能看到內容。'))return;payload={app:'pzjy',v:1,cases:arr};note='未加密，請妥善存放。'}
+  const t=Date.now();arr.forEach(c=>{c.exported=t;if(cases[c.id])cases[c.id].exported=t});
+  const c0=cur;cur=null;save();cur=c0;
+  showDownload(name,JSON.stringify(payload),note);
+}
+function saveSettings(){try{localStorage.setItem(SKEY,JSON.stringify(settings))}catch(e){}}
+
+function newCase(type){
+  const c={id:uid(),type,created:Date.now(),updated:Date.now(),
+    name:'',gender:'',birth:'',idType:'身分證',idNo:'',phone:'',
+    mental:false,abor:false,tribe:'',foreign:false,nation:'',civil:false,
+    crime:'',caseName:'',labCats:[],unit:'',officer:'',caseNo:'',stock:'',
+    pz:{no:'',first:'是',heavy3:'',noReason:[],segs:[{},{},{}],transfer:'',detainApply:'',detainGranted:'',notes:''},
+    chk:{},la:{apply:'',date:todayStr(),eth:'',ethTxt:'',occ:'',edu:'',inSchool:false,cphone:'',mail:'',home:'',emer:'',emerRel:'',emerPhone:'',dis:[],cust:false,jail:'',cell:'',room:'',pid:'',income:'',assets:'',agree:'',proc:[],cannot:'',summary:'',cj:'否',room2:'',reason:''},
+    jy:{entry:type==='jy'?'inv':'inv',court:settings.court,caseNo:'',stock:'',judge:'',pros:'',call:'',hearing:'',room:'',read:{},readNote:{},claims:[],claimPre:[],claimOther:'',prosEvid:'',
+        clk:{arrest:'',police:'',transfer:'',filed:'',obs:[]},meet:{},meetNote:'',
+        a:{proc:[],procNote:'',suspect:false,suspectNote:'',flee:[],fleeNote:'',coll:[],collNote:'',heavy:false,heavyNote:'',rep:[],repNote:'',bail:'',address:'',noExit:true,report:'',monitor:false,noContact:true,guarantor:'',progress:'',r114:[],extra:''},
+        stmt:'',result:'',resultNote:'',warrant:'',maker:'court',ruleNo:'',served:'',gist:'',appeal:'',appealStmt:'',done:{}}};
+  return c;
+}
+const isJy=c=>c.type==='jy'||c.pz.detainApply==='是';
+
+/* ================== 表單元件 ================== */
+const F={
+ text:(p,l,o={})=>`<label class="f"><span>${l}</span><input type="${o.type||'text'}" data-p="${p}" value="${esc(getP(cur,p))}" placeholder="${esc(o.ph||'')}" ${o.re?'data-re="1"':''}></label>`,
+ area:(p,l,o={})=>`<label class="f"><span>${l}</span><textarea data-p="${p}" class="${o.big?'big':''}" placeholder="${esc(o.ph||'')}">${esc(getP(cur,p))}</textarea></label>`,
+ date:(p,l)=>`<label class="f"><span>${l}</span><input type="date" data-p="${p}" value="${esc(getP(cur,p))}"></label>`,
+ dt:(p,l,o={})=>`<label class="f"><span>${l}</span><div class="dt"><input type="datetime-local" data-p="${p}" value="${esc(getP(cur,p))}" ${o.re?'data-re="1"':''}><button type="button" data-now="${p}">現在</button></div></label>`,
+ sel:(p,l,opts,o={})=>`<label class="f"><span>${l}</span><select data-p="${p}" ${o.re?'data-re="1"':''}>${opts.map(x=>{const[v,t]=Array.isArray(x)?x:[x,x];return `<option value="${esc(v)}" ${getP(cur,p)===v?'selected':''}>${esc(t)}</option>`}).join('')}</select></label>`,
+ radio:(p,l,opts,o={})=>`<div class="f"><span class="muted">${l}</span><div class="opts">${opts.map(v=>`<label><input type="radio" name="${p}" data-p="${p}" value="${esc(v)}" ${getP(cur,p)===v?'checked':''} ${o.re?'data-re="1"':''}>${esc(v)}</label>`).join('')}</div></div>`,
+ multi:(p,l,opts,o={})=>{const a=getP(cur,p)||[];return `<div class="f">${l?`<span class="muted">${l}</span>`:''}<div class="opts">${opts.map(x=>{const[v,t]=Array.isArray(x)?x:[x,x];return `<label><input type="checkbox" data-m="${p}" value="${esc(v)}" ${a.includes(v)?'checked':''} ${o.re?'data-re="1"':''}>${esc(t)}</label>`}).join('')}</div></div>`},
+ bool:(p,l,o={})=>`<div class="opts"><label><input type="checkbox" data-b="${p}" ${getP(cur,p)?'checked':''} ${o.re?'data-re="1"':''}>${l}</label></div>`
+};
+function checklist(groups,store,noteStore){
+  return groups.map(g=>`<h3>${g.g}</h3>`+g.items.map(([id,t,law])=>`<div class="ck"><input type="checkbox" data-b="${store}.${id}" ${getP(cur,store+'.'+id)?'checked':''}><div class="t">${esc(t)}${law?`<small>${esc(law)}</small>`:''}${noteStore?`<input type="text" data-p="${noteStore}.${id}" value="${esc(getP(cur,noteStore+'.'+id))}" placeholder="筆記">`:''}</div></div>`).join('')).join('');
+}
+
+/* ================== 版面 ================== */
+const TABS=[
+ {id:'basic',l:'基本資料',s:()=>true},
+ {id:'pz',l:'陪訊紀錄',s:c=>c.type==='pz'},
+ {id:'check',l:'陪訊檢核',s:c=>c.type==='pz'},
+ {id:'la',l:'法扶申請',s:c=>c.type==='pz'},
+ {id:'jyin',l:'羈押接案',s:isJy,jy:1},
+ {id:'read',l:'閱卷',s:isJy,jy:1},
+ {id:'clock',l:'24小時',s:isJy,jy:1},
+ {id:'meet',l:'律見',s:isJy,jy:1},
+ {id:'args',l:'爭點陳述',s:isJy,jy:1},
+ {id:'after',l:'庭後抗告',s:isJy,jy:1},
+ {id:'forms',l:'表單輸出',s:()=>true}
+];
+function render(){
+  const tb=$('#tabs');
+  $('#hLock').style.display=sessKey?'':'none';
+  if(locked){tb.style.display='none';$('#hTitle').textContent='刑事陪偵暨羈押辯護系統';renderLock();return}
+  if(view!=='case'||!cur){tb.style.display='none';$('#hTitle').textContent='刑事陪偵暨羈押辯護系統';
+    if(view==='lib')renderLib();else if(view==='set')renderSettings();else renderList();return}
+  $('#hTitle').textContent=(cur.name||'（未填姓名）')+'｜'+(cur.type==='pz'?'檢警陪偵':'羈押審查');
+  const vis=TABS.filter(t=>t.s(cur));if(!vis.find(t=>t.id===tab))tab=vis[0].id;
+  tb.style.display='flex';
+  tb.innerHTML=vis.map(t=>`<button class="${t.id===tab?'on':''} ${t.jy?'jy':''}" data-tab="${t.id}">${t.l}</button>`).join('');
+  const fn=R[tab];$('#main').innerHTML=fn?fn():'';
+  const on=tb.querySelector('.on');if(on)on.scrollIntoView({inline:'center',block:'nearest'});
+}
+
+/* ---------- 案件列表 ---------- */
+function renderLock(){
+  $('#main').innerHTML=`<div class="card lockbox"><h2>🔒 已鎖定</h2><p class="muted">請輸入開啟密碼</p>
+  <input type="password" id="pinIn" inputmode="numeric" autocomplete="off" placeholder="••••••">
+  <div class="btns" style="justify-content:center;margin-top:12px"><button class="btn pri" data-act="unlock">解鎖</button></div>
+  <details style="text-align:left;margin-top:20px"><summary class="muted">忘記密碼</summary><p class="muted">密碼無法找回。只能清除這台裝置上的全部案件後重新開始（已匯出到 Dropbox 的案件檔不受影響）。</p><button class="btn bad sm" data-act="wipe">清除全部資料</button></details></div>`;
+  setTimeout(()=>{const i=$('#pinIn');if(i){i.focus();i.onkeydown=e=>{if(e.key==='Enter')unlock(i.value)}}},50);
+}
+function renderList(){
+  const arr=Object.values(cases).sort((a,b)=>b.updated-a.updated);
+  const days=Number(settings.retain)||0, now=Date.now();
+  const age=c=>Math.floor((now-c.updated)/864e5);
+  const stale=days?arr.filter(c=>age(c)>=days):[];
+  $('#main').innerHTML=`
+  ${!sessKey?`<div class="note w">尚未設定開啟密碼，案件資料以未加密方式存在這台裝置。建議到「事務所設定」設定密碼。</div>`:''}
+  ${stale.length?`<div class="note b"><p><b>${stale.length} 件案件已超過 ${days} 天未更新</b></p><p>回報、結案後建議匯出加密案件檔存到 Dropbox，再從這台裝置刪除。</p></div>`:''}
+  <div class="card"><h2>開新案件</h2>
+   <div class="btns"><button class="btn pri" data-new="pz">檢警陪偵（法扶）</button><button class="btn acc" data-new="jy">法院指定羈押審查</button></div>
+   <p class="muted">陪偵中若檢察官聲請羈押，在「陪訊紀錄」勾選即會接續羈押審查流程，資料不必重打。</p></div>
+  <div class="card"><h2>案件（${arr.length}）</h2><div class="list">
+   ${arr.length?arr.map(c=>`<div class="item"><span class="tag ${c.type==='jy'?'jy':''}">${c.type==='jy'?'羈押':'陪偵'}</span><div class="m"><b>${esc(c.name||'（未填姓名）')}</b><small>${[c.caseName||crimeOf(c)?.n,fmtDT(new Date(c.created))].filter(Boolean).map(esc).join('｜')}${isJy(c)&&c.type==='pz'?'｜已聲押':''}</small><div>${c.exported?`<span class="chip g">已匯出 ${fmtDT(new Date(c.exported)).slice(0,-6)}</span>`:'<span class="chip">未匯出</span>'}${days&&age(c)>=days?`<span class="chip r">${age(c)}天未更新</span>`:''}</div></div><div style="display:flex;flex-direction:column;gap:6px"><button class="btn sm" data-open="${c.id}">開啟</button><button class="btn sm bad" data-delcase="${c.id}">刪除</button></div></div>`).join(''):'<p class="muted">尚無案件</p>'}
+  </div></div>
+  <div class="card"><h2>匯入、匯出、設定</h2>
+   <div class="btns"><label class="btn">匯入案件檔<input type="file" id="impFile" accept=".json,application/json" style="display:none"></label><button class="btn" data-act="expAll">匯出全部案件</button><button class="btn" data-act="settings">事務所設定</button></div>
+   <p class="muted">資料只存在這台裝置的瀏覽器裡，不會上傳。換裝置時，請匯出加密案件檔存到 Dropbox，再到另一台裝置匯入。清除 Safari 網站資料會一併刪除案件。</p></div>`;
+}
+function renderSettings(){
+  const st=settings;
+  $('#main').innerHTML=`<div class="card"><h2>開啟密碼</h2>
+  ${sessKey?`<p class="note g">已設定密碼，案件資料以 AES-256 加密存放。</p>
+   <label class="f"><span>新密碼（至少6碼）</span><input type="password" id="pin1" inputmode="numeric" autocomplete="new-password"></label>
+   <label class="f"><span>再輸入一次</span><input type="password" id="pin2" inputmode="numeric" autocomplete="new-password"></label>
+   <div class="btns"><button class="btn pri" data-act="setPin">變更密碼</button><button class="btn bad" data-act="rmPin">移除密碼</button></div>`
+  :`<p class="note w">尚未設定。設定後，案件資料會加密存放，每次開啟需輸入密碼；密碼遺失無法救回。</p>
+   <label class="f"><span>設定密碼（至少6碼）</span><input type="password" id="pin1" inputmode="numeric" autocomplete="new-password"></label>
+   <label class="f"><span>再輸入一次</span><input type="password" id="pin2" inputmode="numeric" autocomplete="new-password"></label>
+   <div class="btns"><button class="btn pri" data-act="setPin">設定密碼</button></div>`}
+  <label class="f"><span>閒置或離開幾分鐘後自動鎖定（0＝不自動鎖定）</span><input type="number" data-s="autoLock" value="${esc(st.autoLock)}"></label>
+  </div>
+  <div class="card"><h2>清除提醒</h2>
+  <label class="f"><span>案件超過幾天未更新時提醒刪除（0＝不提醒）</span><input type="number" data-s="retain" value="${esc(st.retain)}"></label></div>
+  <div class="card"><h2>事務所資料</h2>
+  ${['lawyer:律師姓名','office:事務所地址（委任狀）','officeFull:事務所地址（陳報狀）','phone:電話','branch:法扶分會','court:地方法院','high:抗告法院'].map(x=>{const[k,l]=x.split(':');return `<label class="f"><span>${l}</span><input type="text" data-s="${k}" value="${esc(st[k])}"></label>`}).join('')}
+  <div class="btns"><button class="btn pri" data-act="home">完成</button></div></div>`;
+}
+/* ---------- 案由庫 ---------- */
+function crimeCard(cr,open){
+  if(!cr||cr.k==='other')return '';
+  return `<details ${open?'open':''}><summary>${esc(cr.n)}</summary>
+  <table class="lib">${cr.laws.map(l=>`<tr><td style="width:38%"><b>${esc(l[0])}</b>${l[2]?` <span class="chip r">重罪${l[2]==='重*'?'（部分）':''}</span>`:''}</td><td>${esc(l[1])}</td></tr>`).join('')}</table>
+  <p><span class="chip y">預防性羈押</span>${esc(cr.pre||'無')}</p>
+  <p><span class="chip">重罪</span>${esc(cr.heavy)}</p>
+  ${cr.q.length?`<h3>律見追問</h3><ul>${cr.q.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:''}
+  ${cr.d.length?`<h3>常見抗辯</h3><ul>${cr.d.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:''}
+  </details>`;
+}
+function renderLib(){
+  $('#main').innerHTML=`<div class="card"><h2>案由庫</h2><p class="muted">條文已依全國法規資料庫核對（2026年11月）。刑度以條文為準，個案仍請確認。</p></div>
+  ${CRIMES.map(c=>crimeCard(c,false)).join('')}
+  <div class="card"><h2>羈押要件速查</h2>
+  <p><b>§101 I</b> 犯罪嫌疑重大＋①逃亡或有事實足認有逃亡之虞 ②有事實足認有湮滅、偽造、變造證據或勾串共犯或證人之虞 ③死刑、無期或最輕本刑5年以上之罪，有相當理由認有①②之虞；且非予羈押顯難進行追訴、審判或執行。</p>
+  <p><b>§101-1 I 預防性羈押罪名</b></p><ul>${PRE_ITEMS.map(x=>`<li>${x}</li>`).join('')}</ul>
+  <p><b>其他預防性羈押</b>：家暴法§30-1（違反保護令、家庭成員間故意家暴之罪）；跟騷法§21（§18 II、§19）。</p>
+  <p><b>§101-2</b> 有羈押原因但無必要者得逕命具保、責付、限制住居；有§114各款情形者，非不能具保、責付、限制住居，不得羈押。</p>
+  <p><b>§114</b> 具保聲請停止羈押不得駁回：①最重本刑3年以下（累犯、有犯罪習慣、假釋中更犯、依§101-1羈押者除外）②懷胎5月以上或產後未滿2月 ③現罹疾病非保外治療顯難痊癒。</p>
+  <p><b>§116-2</b> 停押附條件：定期報到、不得接觸騷擾、限制活動、科技設備監控、不得離開住居所或一定區域、交付護照、限制財產處分等。</p>
+  <p><b>羈押期間</b>：偵查中2月，延長1次2月（§108 I、V）。審判中3月，每次延長2月；最重本刑10年以下一、二審各3次、三審1次（§108 V）；最重本刑死刑、無期或逾10年者一、二審各6次、三審1次，審判中累計不得逾5年（妥速審判法§5）。</p>
+  <p><b>救濟</b>：法院羈押裁定→抗告，10日，自送達後起算（§404 I ②、§406）；審判長、受命法官之羈押處分→準抗告，10日（§416 I ①、III）；誤用者視為已提出（§418 II）。</p>
+  </div>`;
+}
+
+/* ================== 各分頁 ================== */
+const R={};
+R.basic=()=>{
+  const cr=crimeOf(cur);
+  return `<div class="card"><h2>當事人</h2>
+  <div class="row c2">${F.text('name','姓名',{re:1})}${F.radio('gender','性別',['男','女'])}</div>
+  <div class="row c3">${F.date('birth','出生日期')}${F.sel('idType','證件',['身分證','居留證','護照'])}${F.text('idNo','證件號碼')}</div>
+  ${F.text('phone','電話',{type:'tel'})}
+  <h3>身分別</h3>
+  ${F.bool('mental','因精神或心智損傷等，疑似無法為完全陳述',{re:1})}
+  ${F.bool('abor','具原住民身分',{re:1})}${cur.abor?F.text('tribe','族別',{ph:'例：阿美'}):''}
+  ${F.bool('foreign','外籍（需通譯）',{re:1})}${cur.foreign?F.text('nation','國籍、語言'):''}
+  ${cur.type==='pz'?F.bool('civil','非屬上開身分，但為執行長授權派案之公民不服從案件'):''}
+  ${cur.mental?`<div class="note w">疑似身心障礙：應有輔佐人或社工陪同在場（§35 III），法扶申請書須勾身心障礙類別。</div>`:''}
+  ${cur.foreign?`<div class="note w">等候通譯不計入24小時，但不得逾6小時（§93-1 I ⑥）。</div>`:''}
+  </div>
+  <div class="card"><h2>案件</h2>
+  ${F.sel('crime','案由類型',[['','請選擇'],...CRIMES.map(c=>[c.k,c.n])],{re:1})}
+  ${F.text('caseName','案由（填入委任狀）',{ph:cr&&cr.k!=='other'?cr.n.replace(/（.*）/,''):'例：詐欺'})}
+  ${cur.type==='pz'?`<div class="btns"><button class="btn sm" data-act="autoLab">依案由自動勾選</button></div>${F.multi('labCats','陪訊記錄表案由（可複選）',[...LAB_CATS,'其他','所涉罪名不明'])}`:''}
+  <div class="row c2">${F.text('unit',cur.type==='pz'?'地點（分局、派出所、地檢署）':'偵查機關')}${F.text('officer','承辦員警、檢察官')}</div>
+  <div class="row c2">${F.text('caseNo','偵查案號')}${F.text('stock','股別')}</div>
+  </div>
+  ${cr?crimeCard(cr,true):''}`;
+};
+
+function autoNoReason(c){
+  const r=[];const heavy=c.pz.heavy3==='是', first=c.pz.first==='是';
+  const a=!c.mental&&!heavy, b=!c.mental&&!first;
+  if(a)r.push('a');if(b)r.push('b');if(!c.abor&&(a||b))r.push('c');
+  return r;
+}
+R.pz=()=>{
+  const p=cur.pz, auto=autoNoReason(cur);
+  const eligible=!(auto.includes('c'));
+  return `<div class="card"><h2>陪訊案件記錄表</h2>
+  ${F.text('pz.no','法扶案件編號')}
+  <div class="row c2">${F.radio('pz.first','本案是否第一次受偵訊',['是','否'],{re:1})}${F.radio('pz.heavy3','是否涉犯最輕本刑3年以上之罪',['是','否'],{re:1})}</div>
+  <div class="note ${eligible?'g':'w'}">${eligible?'依目前資料，符合陪訊要件。':'依目前資料，可能僅到場未進行陪訊（原住民、疑似心智障礙、首次受偵訊且涉最輕本刑3年以上之罪，均不符）。'}</div>
+  <div class="f"><span class="muted">陪訊律師僅到場未進行陪訊之原因</span>
+  <div class="btns"><button class="btn sm" data-act="autoNR">依資料自動判斷</button><button class="btn sm" data-act="clrNR">清除</button></div>
+  ${F.multi('pz.noReason','',[['a','非（疑似）心智障礙且非涉犯本刑三年以上重罪'],['b','非（疑似）心智障礙且本案非第一次受偵訊'],['c','非具原住民身分，且有前二項情形之一']])}</div>
+  </div>
+  ${[0,1,2].map(i=>`<div class="card"><h2>第${['一','二','三'][i]}段陪訊${i?'（換人或第二段時才填）':''}</h2>
+   ${i?F.text(`pz.segs.${i}.lawyer`,'陪訊律師'):''}
+   ${F.dt(`pz.segs.${i}.depart`,'1. 出發時間')}
+   ${F.dt(`pz.segs.${i}.arrive`,'到場時間（自用，不印）')}
+   ${F.dt(`pz.segs.${i}.finish`,'2. 完成時間（回到家或回到事務所）')}
+   <div class="row c2">${F.radio(`pz.segs.${i}.startOn`,'3. 到場時偵訊開始否',['是','否'])}${F.radio(`pz.segs.${i}.endOn`,'離開時偵訊結束否',['是','否'])}</div>
+   ${F.area(`pz.segs.${i}.note`,'4. 其他回報事項')}
+  </div>`).join('')}
+  <div class="card"><h2>後續</h2>
+  ${F.radio('pz.transfer','是否移送地檢署',['是','否'])}
+  ${F.radio('pz.detainApply','檢察官是否聲請羈押',['是','否'],{re:1})}
+  ${F.radio('pz.detainGranted','法院是否裁定准予羈押',['是','否'])}
+  ${p.detainApply==='是'?`<div class="note b">已開啟羈押審查流程（橘色分頁）。陪偵資料會沿用。</div>`:''}
+  </div>`;
+};
+R.check=()=>`<div class="card"><h2>陪訊檢核</h2>${checklist(PZ_CHECK,'chk')}</div>
+  <div class="card"><h2>律見、詢問筆記</h2>${F.area('pz.notes','可用 Apple Pencil 直接手寫',{big:1})}</div>`;
+
+R.la=()=>{
+  const l=cur.la;
+  let h=`<div class="card"><h2>是否申請法扶後續扶助</h2>${F.radio('la.apply','當事人是否申請',['是','否'],{re:1})}</div>`;
+  if(l.apply!=='是')return h+`<p class="muted">選「是」後填寫「檢警陪偵後－法律扶助申請書」，陪訊完畢後一週內回報分會。</p>`;
+  return h+`<div class="card"><h2>申請書（申請人資料）</h2>
+  <div class="btns"><button class="btn sm" data-act="laFill">從基本資料帶入</button></div>
+  ${F.date('la.date','申請日期')}
+  ${F.radio('la.eth','族群',['一般','原住民','外籍','歸化'],{re:1})}
+  ${['原住民','外籍','歸化'].includes(l.eth)?F.text('la.ethTxt',l.eth==='原住民'?'族別':l.eth==='外籍'?'國籍':'原國籍'):''}
+  <div class="row c2">${F.text('la.occ','職業類別')}${F.text('la.edu','教育程度')}</div>
+  ${F.bool('la.inSchool','仍在學')}
+  ${F.text('la.cphone','聯絡電話',{type:'tel'})}
+  ${F.text('la.mail','通訊地址（基金會送達地址）')}
+  ${F.text('la.home','住所地址')}
+  <div class="row c3">${F.text('la.emer','緊急聯絡人')}${F.text('la.emerRel','與申請人關係')}${F.text('la.emerPhone','電話或手機',{type:'tel'})}</div>
+  <h3>身心障礙類別（依證明背面編號或口述，均無者免填）</h3>
+  ${F.multi('la.dis','',[['B1','B1 神經系統構造及精神、心智功能'],['b110','　└ 意識功能b110'],['b117','　└ 智力功能b117'],['b122','　└ 整體心理社會功能b122'],['b139','　└ 整體心理功能b139'],['b140','　└ 注意力功能b140'],['B1o','　└ 其他'],['B2','B2 眼、耳及相關構造與感官功能及疼痛'],['b210','　└ 視覺功能b210'],['b230','　└ 聽覺功能b230'],['B2o','　└ 其他'],['B3','B3 涉及聲音與言語構造及其功能'],['b310','　└ 嗓音功能b310'],['B3o','　└ 其他'],['B4','B4 循環、造血、免疫與呼吸系統'],['B5','B5 消化、新陳代謝與內分泌系統'],['B6','B6 泌尿與生殖系統'],['B7','B7 神經、肌肉、骨骼之移動相關'],['B8','B8 皮膚與相關構造']])}
+  <h3>在監押情形</h3>
+  ${F.bool('la.cust','在監押',{re:1})}
+  ${l.cust?`<div class="row c2">${F.text('la.jail','看守所／監獄')}${F.text('la.pid','個人編號')}</div><div class="row c2">${F.text('la.cell','舍名')}${F.text('la.room','房號')}</div>`:''}
+  <h3>經濟狀況</h3>
+  <div class="row c2">${F.text('la.income','每月收入（元）',{type:'number'})}${F.text('la.assets','名下資產（元）',{type:'number'})}</div>
+  ${F.radio('la.agree','數額不清楚時，是否同意切結符合無資力標準（月收入低於22000元、資產低於50萬元）',['同意','不同意'])}
+  <div class="note">申請人簽名欄留白，列印後由當事人簽名；或於現場紙本申請書簽名後上傳。</div>
+  </div>
+  <div class="card"><h2>陪偵律師填寫</h2>
+  ${F.multi('la.proc','1. 申請扶助程序（可複選）',[['inv','刑事偵查辯護或少年調查保護程序輔佐'],['app','對羈押裁定提起抗告']])}
+  ${F.radio('la.cannot','2. 申請人是否（疑似）無法為完全陳述',['是','否'])}
+  <div class="btns"><button class="btn sm" data-act="laSum">依案件資料產生案情概述草稿</button></div>
+  ${F.area('la.summary','3. 案情概述',{big:1})}
+  ${F.radio('la.cj','4. 是否為故意犯罪因而發生死亡結果之罪（未來可能行國民法官程序）',['否','是'])}
+  ${F.radio('la.room2','5. 本案是否有扶助之空間',['否','是'],{re:1})}
+  ${l.room2==='是'?F.area('la.reason','6. 有扶助空間之理由（簡述即可）'):''}
+  </div>`;
+};
+
+/* ---------- 羈押 ---------- */
+R.jyin=()=>{
+  const j=cur.jy,e=ENTRIES[j.entry]||ENTRIES.inv;
+  return `<div class="card jycard"><h2>羈押接案</h2>
+  ${F.sel('jy.entry','進案類型',Object.entries(ENTRIES).map(([k,v])=>[k,v.n]),{re:1})}
+  <div class="note">${e.tips.map(t=>`<p>・${esc(t)}</p>`).join('')}</div>
+  ${F.dt('jy.call','法院來電時間')}
+  <div class="row c2">${F.dt('jy.hearing','開庭時間')}${F.text('jy.room','法庭')}</div>
+  <div class="row c2">${F.text('jy.court','法院')}${F.text('jy.caseNo','羈押案號（例：115聲羈12）')}</div>
+  <div class="row c3">${F.text('jy.stock','股別')}${F.text('jy.judge','法官')}${F.text('jy.pros','檢察官')}</div>
+  </div>`;
+};
+R.read=()=>{
+  const j=cur.jy;
+  return `<div class="card jycard"><h2>閱卷（重點：有無羈押事由、程序是否違法）</h2>
+  <p class="muted">依§33-1，偵查中羈押審查辯護人得檢閱卷證並抄錄、攝影。</p>
+  ${checklist(READ_CHECK,'jy.read','jy.readNote')}</div>
+  <div class="card jycard"><h2>檢方主張的羈押原因</h2>
+  ${F.multi('jy.claims','',[['f','§101 I ① 逃亡之虞'],['c','§101 I ② 湮滅證據、勾串共犯證人之虞'],['h','§101 I ③ 重罪'],['p','§101-1 預防性羈押'],['dv','家暴法§30-1'],['st','跟騷法§21']],{re:1})}
+  ${j.claims.includes('p')?F.multi('jy.claimPre','§101-1 I 款次',PRE_ITEMS.map((x,i)=>[String(i+1),x])):''}
+  ${F.area('jy.prosEvid','檢方所憑事證、理由摘要')}
+  ${F.area('jy.claimOther','其他（共犯到案情形、扣押物、犯罪事實摘要）')}
+  </div>`;
+};
+function clockCalc(){
+  const k=cur.jy.clk;const a=pd(k.arrest),f=pd(k.filed);
+  let obs=0;(k.obs||[]).forEach(o=>{const s=pd(o.s),e=pd(o.e);if(s&&e&&e>s)obs+=e-s});
+  if(!a)return null;
+  const deadline=new Date(a.getTime()+24*3600000+obs);
+  const res={a,obs,deadline};
+  if(f){res.used=f-a-obs;res.over=res.used>24*3600000}
+  return res;
+}
+const OBS_TYPES=['①交通障礙或不可抗力','②在途解送時間','③夜間不得詢問（§100-3 I）','④身體健康突發事由','⑤等候辯護人到場（≦4小時）','⑥等候通譯（≦6小時）','⑦候保、候責付（≦4小時）','⑧法院提審期間','律見時間（§34 II，≦1小時）'];
+R.clock=()=>{
+  const k=cur.jy.clk,r=clockCalc();
+  return `<div class="card jycard"><h2>24小時計算（§93 II、§93-1）</h2>
+  ${F.dt('jy.clk.arrest','拘提／逮捕時間（人身自由開始受限制時，從現場起算）',{re:1})}
+  ${F.dt('jy.clk.police','到警局時間')}
+  ${F.dt('jy.clk.transfer','移送地檢時間')}
+  ${F.dt('jy.clk.filed','檢察官聲請羈押（繫屬法院）時間',{re:1})}
+  <h3>法定障礙期間（不計入）</h3>
+  ${(k.obs||[]).map((o,i)=>`<div class="obs">${F.sel(`jy.clk.obs.${i}.t`,'事由',OBS_TYPES)}<div class="row c2">${F.dt(`jy.clk.obs.${i}.s`,'開始',{re:1})}${F.dt(`jy.clk.obs.${i}.e`,'結束',{re:1})}</div><button class="btn sm bad" data-delobs="${i}">刪除</button></div>`).join('')}
+  <div class="btns"><button class="btn sm" data-act="addObs">＋新增障礙期間</button></div>
+  ${r?`<div class="clock-res ${r.over?'bad':'ok'}">
+    <div>扣除障礙：${hm(r.obs)}</div>
+    <div>最遲聲請時間：<span class="big-num">${fmtDT(r.deadline)}</span></div>
+    ${r.used!=null?`<div>實際計入時間：<b>${hm(r.used)}</b>　${r.over?'<b style="color:var(--bad)">已逾24小時</b>':'未逾24小時'}</div>`:''}
+  </div>`:'<p class="muted">輸入拘捕時間後自動計算。</p>'}
+  <div class="note"><p>・夜間（日出前、日沒後）警方原則不得詢問；受詢問人同意者，該期間要計入24小時。</p><p>・跨轄區輪流夜間詢問，夜間停止詢問是指所有司法警察，不得互相切換以延長障礙期間。</p><p>・違反§93-1 II、§100-3 I 取得之自白及不利陳述不得作為證據（§158-2 I）。</p><p>・搜索時在場是否已受拘束，應就具體情狀判斷（是否可自由離去、上銬）。</p><p>・因法定障礙致24小時內無法移送者，檢察官聲請羈押時應釋明事由（§93-1 III）。</p></div>
+  </div>`;
+};
+R.meet=()=>{
+  const cr=crimeOf(cur);
+  return `<div class="card jycard"><h2>律見問題清單</h2><p class="muted">勾選表示已問；可在每題下方直接手寫答案。</p>
+  ${MEET_Q.map(g=>`<h3>${g.g}</h3>`+g.items.map(([id,t])=>qItem('jy.meet.'+id,t)).join('')).join('')}
+  ${cr&&cr.q.length?`<h3>依案由追問（${esc(cr.n)}）</h3>`+cr.q.map((t,i)=>qItem('jy.meet.cq'+i,t)).join(''):''}
+  </div>
+  <div class="card jycard"><h2>律見筆記</h2>${F.area('jy.meetNote','',{big:1})}</div>`;
+};
+function qItem(p,t){const v=getP(cur,p)||{};return `<div class="q"><div class="ql"><input type="checkbox" data-b="${p}.d" ${v.d?'checked':''}><b>${esc(t)}</b></div><input type="text" data-p="${p}.a" value="${esc(v.a)}" placeholder="回答"></div>`}
+
+R.args=()=>{
+  const a=cur.jy.a,cl=cur.jy.claims,cr=crimeOf(cur);
+  return `<div class="card jycard"><h2>程序面</h2>
+  ${F.multi('jy.a.proc','',[['arrest','拘提、逮捕不合法（拘捕前置）'],['time','逾24小時聲請'],['night','違法夜間詢問'],['notice','未告知羈押事實、理由、證據；禁止獲知卷證不得作為依據'],['bodycam','聲請當庭勘驗員警密錄器']])}
+  ${F.area('jy.a.procNote','程序瑕疵具體事實')}
+  </div>
+  <div class="card jycard"><h2>犯罪嫌疑</h2>${F.bool('jy.a.suspect','爭執犯罪嫌疑重大',{re:1})}${a.suspect?F.area('jy.a.suspectNote','理由（實體爭執法院多認為屬本案審理問題，宜簡短）'):''}</div>
+  <div class="card jycard"><h2>羈押原因</h2>
+  ${cl.length?'':'<div class="note w">尚未在「閱卷」勾選檢方主張的羈押原因，以下全部顯示。</div>'}
+  ${(!cl.length||cl.includes('f'))?`<h3>逃亡之虞</h3>${F.multi('jy.a.flee','',ARG.flee)}${F.area('jy.a.fleeNote','補充')}`:''}
+  ${(!cl.length||cl.includes('c'))?`<h3>湮滅證據、勾串之虞</h3>${F.multi('jy.a.coll','',ARG.coll)}${F.area('jy.a.collNote','補充')}`:''}
+  ${(!cl.length||cl.includes('h'))?`<h3>重罪</h3>${F.bool('jy.a.heavy','主張重罪不得作為唯一羈押理由（釋字665號）')}${F.area('jy.a.heavyNote','補充')}`:''}
+  ${(!cl.length||cl.some(x=>['p','dv','st'].includes(x)))?`<h3>反覆實行之虞</h3>${F.multi('jy.a.rep','',ARG.rep)}${F.area('jy.a.repNote','補充')}`:''}
+  ${cr&&cr.d.length?`<div class="note"><b>${esc(cr.n)}常見抗辯</b>${cr.d.map(x=>`<p>・${esc(x)}</p>`).join('')}</div>`:''}
+  </div>
+  <div class="card jycard"><h2>必要性與替代手段</h2>
+  ${F.text('jy.a.bail','具保金額（元）',{type:'number'})}
+  ${F.text('jy.a.address','限制住居地址')}
+  ${F.text('jy.a.guarantor','責付對象（姓名、關係）')}
+  ${F.text('jy.a.report','定期報到處所（例：台東分局○○派出所）')}
+  ${F.bool('jy.a.noExit','同意限制出境、出海')}
+  ${F.bool('jy.a.noContact','同意不接觸共犯、被害人、證人')}
+  ${F.bool('jy.a.monitor','同意科技設備監控')}
+  ${F.area('jy.a.progress','訴訟進行程度（已起訴、證據已調查完畢等）')}
+  <div class="note w">家庭、工作需求單獨主張，實務多認與羈押必要性無涉，應搭配上述替代手段。</div>
+  </div>
+  <div class="card jycard"><h2>§114 不得駁回事由</h2>
+  ${F.multi('jy.a.r114','',[['1','①最重本刑3年以下（非累犯、無犯罪習慣、非假釋中更犯、非依§101-1羈押）'],['2','②懷胎5月以上或產後未滿2月'],['3','③現罹疾病，非保外治療顯難痊癒']])}
+  </div>
+  <div class="card jycard"><h2>其他補充</h2>${F.area('jy.a.extra','')}</div>
+  <div class="card jycard"><h2>開庭陳述</h2>
+  <div class="btns"><button class="btn acc" data-act="genStmt">產生陳述稿</button><button class="btn" data-act="court">庭上大字模式</button><button class="btn" data-act="copyStmt">複製</button></div>
+  ${F.area('jy.stmt','可直接修改',{big:1})}
+  </div>`;
+};
+R.after=()=>{
+  const j=cur.jy;const w=pd(j.warrant),s=pd(j.served);
+  let per='';
+  if(w){const end=addDays(addMonths(w,2),-1);per=`<div class="note"><p>偵查中羈押期滿日（約）：<b>${fmtD(end)}</b></p><p>檢察官最遲聲請延押：<b>${fmtD(addDays(end,-5))}</b>（期滿5日前）</p><p>延押後期滿日（約）：<b>${fmtD(addDays(addMonths(w,4),-1))}</b>（偵查中以延長1次為限）</p><p class="muted">期間依押票日起算，實際以法院、看守所計算為準。</p></div>`}
+  let dl='';
+  if(s){const d=addDays(s,10);dl=`<div class="clock-res bad"><div>${j.maker==='court'?'抗告':'準抗告'}期限：<span class="big-num">${fmtD(d)}</span></div><div class="muted">自送達翌日起算10日；末日為假日順延；當事人不在法院所在地者另加在途期間。</div></div>`}
+  return `<div class="card jycard"><h2>裁定結果</h2>
+  ${F.sel('jy.result','結果',['','駁回羈押聲請','具保','責付','限制住居','具保並限制住居、出境出海','羈押','羈押並禁止接見通信','延長羈押','准予具保停止羈押','駁回具保停止羈押聲請'],{re:1})}
+  ${F.area('jy.resultNote','保證金、附條件等')}
+  ${F.date('jy.warrant','押票日（羈押者）')}
+  ${per}
+  </div>
+  <div class="card jycard"><h2>救濟</h2>
+  ${F.sel('jy.maker','作成者',[['court','法院裁定（含偵查中羈押審查法官）→抗告'],['judge','審判長、受命法官處分→準抗告']],{re:1})}
+  ${F.text('jy.ruleNo','裁定字號')}
+  ${F.date('jy.served','裁定送達日',)}
+  ${dl}
+  ${F.radio('jy.appeal','是否提起抗告',['是','否','考慮中'],{re:1})}
+  ${j.appeal==='是'?`${F.area('jy.gist','原裁定理由摘要')}
+  <div class="btns"><button class="btn acc" data-act="genApp">產生抗告理由</button></div>
+  ${F.area('jy.appealStmt','抗告理由（可修改）',{big:1})}
+  <p class="muted">完成後到「表單輸出」列印抗告狀。法扶申請書可勾「對羈押裁定提起抗告」。</p>`:''}
+  </div>
+  <div class="card jycard"><h2>結案</h2>
+  ${F.bool('jy.done.notice','已向當事人說明裁定內容、救濟期間')}
+  ${F.bool('jy.done.family','已通知家屬（羈押者：生活用品、接見）')}
+  ${F.bool('jy.done.reg','義辯律師案件登記表已填寫寄回')}
+  ${F.bool('jy.done.fee','已收到請發給報酬通知書並請領')}
+  </div>`;
+};
+R.forms=()=>{
+  const pz=cur.type==='pz',jy=isJy(cur);
+  const list=[];
+  if(pz){list.push(['wt','偵查中辯護專用委任狀']);list.push(['rec','陪訊案件記錄表']);if(cur.la.apply==='是')list.push(['la','檢警陪偵後－法律扶助申請書（2頁）']);list.push(['rel','刑事解除委任陳報狀'])}
+  if(jy){list.push(['stmt','羈押審查開庭陳述（辯護意旨）']);if(cur.jy.appeal==='是')list.push(['app','刑事抗告狀'])}
+  list.push(['sum','案件摘要（存檔用）']);
+  if(!cur._sel)cur._sel=list.map(x=>x[0]);
+  return `<div class="card"><h2>表單輸出</h2>
+  <div class="opts">${list.map(([k,t])=>`<label><input type="checkbox" data-sel="${k}" ${cur._sel.includes(k)?'checked':''}>${t}</label>`).join('')}</div>
+  <div class="btns"><button class="btn" data-act="preview">預覽</button><button class="btn pri" data-act="print">列印／存成 PDF</button></div>
+  <div class="note"><p>iPad：按「列印」後，在預覽畫面用兩指放大，再點分享 →「儲存到檔案」→ 選 Dropbox，即存成 PDF。</p><p>電腦：列印視窗選「另存為 PDF」。紙張 A4、邊界預設、不要勾「頁首頁尾」。</p></div>
+  </div>
+  <div class="card"><h2>案件檔</h2>
+  <div class="btns"><button class="btn" data-act="exp">匯出案件檔（存到 Dropbox）</button><button class="btn bad" data-act="del">刪除本案</button></div>
+  <p class="muted">案件檔可在其他裝置匯入繼續編輯。檔名含當事人姓名，請存放於事務所資料夾。</p>
+  </div>
+  <div id="pv"></div>`;
+};
+
+/* ================== 產生文字 ================== */
+const CN=['一','二','三','四','五','六','七','八','九','十'];
+function pick(list,ids){return list.filter(([id])=>ids.includes(id)).map(x=>x[1])}
+function genStatement(forAppeal){
+  const c=cur,j=c.jy,a=j.a,parts=[];
+  const r=clockCalc();
+  // 程序
+  const pr=[];
+  if(a.proc.includes('arrest'))pr.push('偵查中聲請羈押採拘捕前置原則，須以合法拘提或逮捕為前提。本件被告之拘提、逮捕程序有違法疑慮'+(a.procNote?'：'+a.procNote:'')+'，羈押之聲請即不合法。');
+  if(a.proc.includes('time'))pr.push(`依刑事訴訟法第93條第2項，檢察官應自拘提或逮捕之時起24小時內聲請羈押。本件被告於${r?fmtDT(r.a):'○○'}遭拘捕${r&&r.used!=null?`，扣除同法第93條之1法定障礙期間後，至聲請時已計入${hm(r.used)}`:''}，已逾法定期間，聲請程序違法。`);
+  if(a.proc.includes('night'))pr.push('司法警察於夜間詢問被告，不符刑事訴訟法第100條之3第1項但書各款情形，依同法第158條之2第1項，所取得之自白及其他不利陳述不得作為證據，亦不得據為認定犯罪嫌疑重大之依據。');
+  if(a.proc.includes('notice'))pr.push('依刑事訴訟法第101條第3項，羈押所依據之事實、理由及證據應告知被告及辯護人並記載於筆錄；經法院禁止被告及辯護人獲知之卷證，不得作為羈押審查之依據。');
+  if(a.proc.includes('bodycam'))pr.push('為釐清拘捕經過，請求當庭勘驗執行拘捕、搜索員警之密錄器影像。');
+  if(pr.length)parts.push(['程序部分',pr]);
+  // 嫌疑
+  if(a.suspect)parts.push(['犯罪嫌疑部分',['檢察官所提證據尚不足使 鈞院認被告犯罪嫌疑重大'+(a.suspectNote?'：'+a.suspectNote:'')+'。']]);
+  // 原因
+  const rs=[];
+  const fl=pick(ARG.flee,a.flee);
+  if(fl.length||a.fleeNote)rs.push(`關於逃亡之虞：被告${fl.join('，')}${a.fleeNote?(fl.length?'，':'')+a.fleeNote:''}，客觀上並無逃亡之動機與可能。逃亡之虞須有具體事實佐證，不得僅以被告於偵查中未完全配合或無資力交保即予推論，檢察官就此並未提出具體事證。`);
+  const co=pick(ARG.coll,a.coll);
+  if(co.length||a.collNote)rs.push(`關於湮滅、偽造、變造證據或勾串共犯、證人之虞：本件${co.join('，')}${a.collNote?(co.length?'，':'')+a.collNote:''}，相關證據均已固定。檢察官並未具體指明被告將與何人勾串、該人可證明何事，難認有事實足認有勾串之虞。`);
+  if(a.heavy||a.heavyNote)rs.push('關於重罪羈押：依司法院釋字第665號解釋意旨，所犯為重罪不得作為羈押之唯一理由，仍須有相當理由認被告有逃亡、湮滅證據或勾串共犯、證人之虞。'+(a.heavyNote||'本件除罪名刑度外，並無其他相當理由。'));
+  const rp=pick(ARG.rep,a.rep);
+  if(rp.length||a.repNote)rs.push(`關於反覆實行同一犯罪之虞：預防性羈押係對被告未來行為之預測，與無罪推定原則有所緊張，應從嚴認定，檢察官須提出被告未來有反覆實行之具體事證，不得僅以本案犯行推論。本件${rp.join('，')}${a.repNote?(rp.length?'，':'')+a.repNote:''}，被告再犯之外在條件已不存在。`);
+  if(rs.length)parts.push(['羈押原因部分',rs]);
+  // 必要性
+  const alt=[];
+  if(a.bail)alt.push(`命被告提出新臺幣${Number(a.bail).toLocaleString()}元之保證金具保`);
+  if(a.guarantor)alt.push(`責付${a.guarantor}`);
+  if(a.address)alt.push(`限制住居於${a.address}`);
+  if(a.noExit)alt.push('限制出境出海');
+  if(a.report)alt.push(`命定期至${a.report}報到`);
+  if(a.noContact)alt.push('命不得接觸共犯、被害人及證人');
+  if(a.monitor)alt.push('命接受科技設備監控');
+  const ne=[];
+  if(alt.length)ne.push(`退步言之，縱認被告仍有羈押原因，亦得以${alt.join('、')}等替代手段，對被告形成相當之心理拘束力及行為制約效果，足以達成保全目的，並無羈押之必要。`);
+  if(a.progress)ne.push(a.progress);
+  if(ne.length)parts.push(['羈押必要性部分',ne]);
+  if(a.r114.length){const m={'1':'所犯最重本刑為三年以下有期徒刑之罪','2':'懷胎五月以上或生產後未滿二月','3':'現罹疾病，非保外治療顯難痊癒'};parts.push(['刑事訴訟法第114條部分',[`被告${a.r114.map(x=>m[x]).join('，且')}，依刑事訴訟法第114條、第101條之2後段，非有不能具保、責付或限制住居之情形，不得羈押；如經具保聲請停止羈押，亦不得駁回。`]])}
+  if(a.extra)parts.push(['其他',[a.extra]]);
+  if(forAppeal)return parts;
+  const end={inv:'綜上所述，請 鈞院駁回檢察官羈押之聲請；如認仍有必要，請准以較低金額具保，或以責付、限制住居、限制出境出海等方式替代羈押。',trial:'綜上所述，請 鈞院審酌上情，免予羈押，改以具保、責付或限制住居等處分替代。',ext:'綜上所述，原羈押原因已不存在或已無繼續羈押之必要，請駁回延長羈押之聲請，或准予具保停止羈押。',bail:'綜上所述，請 鈞院准予被告具保停止羈押。',habeas:'綜上所述，請 鈞院先就提審為審查，認逮捕拘禁不合法者裁定釋放；並駁回羈押之聲請。'}[j.entry]||'';
+  let t='辯護人意見如下：\n';
+  parts.forEach(([h,arr],i)=>{t+=`${CN[i]}、${h}：\n`;arr.forEach((s,k)=>{t+=(arr.length>1?`（${CN[k]}）`:'')+s+'\n'})});
+  t+=`${CN[parts.length]}、${end}`;
+  return t;
+}
+function genAppeal(){
+  const parts=genStatement(true);const j=cur.jy;
+  let t=`一、原裁定意旨略以：${j.gist||'○○○'}。\n二、惟查：\n`;
+  parts.forEach(([h,arr],i)=>{t+=`（${CN[i]}）${h}：\n`;arr.forEach((s,k)=>{t+=(arr.length>1?`${k+1}、`:'')+s+'\n'})});
+  t+=`三、綜上所述，原裁定認被告有羈押之原因及必要，尚有違誤，爰依刑事訴訟法第404條第1項第2款、第406條規定提起抗告，請撤銷原裁定，更為適當之裁定。`;
+  return t;
+}
+function genSummary(){
+  const c=cur,cr=crimeOf(c);
+  const s=[];
+  s.push(`申請人涉嫌${c.caseName||(cr?cr.n:'○○')}案件，${c.unit?'於'+c.unit:''}接受${c.type==='pz'?'詢（訊）問':'羈押審查'}。`);
+  if(c.pz.transfer==='是')s.push('本案已移送地檢署。');
+  if(c.pz.detainApply==='是')s.push(`檢察官聲請羈押，${c.pz.detainGranted==='是'?'經法院裁定羈押':c.pz.detainGranted==='否'?'經法院駁回':'法院尚未裁定'}。`);
+  s.push('（申請人陳述要旨：）');
+  return s.join('');
+}
+
+/* ================== 表單 HTML ================== */
+const bx=v=>`<span class="box">${v?'■':''}</span>`;
+function ynb(v){return `${bx(v==='是')}是 ${bx(v==='否')}否`}
+function dtLine(s){const r=roc(s);return `<span class="u" style="min-width:34px">${r.y}</span>年<span class="u" style="min-width:24px">${r.m}</span>月<span class="u" style="min-width:24px">${r.d}</span>日<span class="u" style="min-width:24px">${r.h}</span>時<span class="u" style="min-width:24px">${r.mi}</span>分`}
+function dateFoot(s){const r=roc(s||todayStr());return `<div class="date"><span>中</span><span>華</span><span>民</span><span>國</span><span>${r.y}</span><span>年</span><span>${r.m}</span><span>月</span><span>${r.d}</span><span>日</span></div>`}
+const caseLabel=()=>cur.caseName||(crimeOf(cur)&&crimeOf(cur).k!=='other'?crimeOf(cur).n.replace(/（.*）/,''):'');
+
+const FORMS={};
+FORMS.wt=()=>{const c=cur;const b=roc(c.birth);return `<div class="pg">
+ <div class="ttl">偵查中辯護專用委任狀</div>
+ <div style="display:flex;justify-content:space-between;margin:6px 0"><b style="font-size:15pt;letter-spacing:6px">刑事委任狀</b><span>案號：${esc(c.caseNo)||'　　年度　　字第　　號'}　${esc(c.stock)}股</span></div>
+ <table class="f">
+  <tr><td style="width:23%"></td><td class="h" style="width:39%">委　　任　　人</td><td class="h">受　　任　　人</td></tr>
+  <tr><td class="h">姓　　名</td><td>${esc(c.name)}</td><td rowspan="3" class="c" style="font-size:14pt">${esc(settings.lawyer)}律師</td></tr>
+  <tr><td class="h">出生年月日</td><td class="c">${b.y||'　　'}年 ${b.m||'　'}月 ${b.d||'　'}日</td></tr>
+  <tr><td class="h">國民身分證<br>統一編號</td><td>${esc(c.idType==='身分證'?c.idNo:'')}</td></tr>
+  <tr><td class="h">住居所或營業所、郵遞區號及電話號碼</td><td style="height:60px">${esc(c.la.home||'')}${c.phone?'<br>'+esc(c.phone):''}</td><td rowspan="5" class="c">事務所地址及電話：<br><br>${esc(settings.office)}<br><br>${esc(settings.phone)}</td></tr>
+  <tr><td class="h">送達代收人姓名、住址、郵遞區號及電話號碼</td><td style="height:60px"></td></tr>
+  <tr><td class="h">刑事被告或犯罪<br>嫌疑人姓名</td><td></td></tr>
+  <tr><td class="h">國民身分證<br>統一編號</td><td></td></tr>
+  <tr><td class="h">與委任人關係</td><td></td></tr>
+ </table>
+ <div class="sm">＊刑事案件如非由被告或犯罪嫌疑人本人委任辯護人者，請註明被告或犯罪嫌疑人姓名，及與委任人之關係。</div>
+ <div style="border:1px solid #000;padding:10px 12px;margin-top:6px;font-size:14pt;line-height:2">
+  為<span class="u">${esc(caseLabel())||'　　　'}</span>案件，委任人依刑事訴訟法第二十七條第一項、第三十條之規定選任受任人為偵查中辯護人。<br>
+  　　謹　　致<br><div class="c">公鑒</div>
+  <div style="padding-left:45%">委任人：${esc(c.name)}<br>受任人：${esc(settings.lawyer)}律師</div>
+  ${dateFoot(c.pz.segs[0].arrive||c.pz.segs[0].depart||todayStr())}
+ </div></div>`};
+
+FORMS.rec=()=>{const c=cur,p=c.pz,b=roc(c.birth);const nr=p.noReason||[];
+ const seg=(i)=>{const s=p.segs[i]||{};const has=s.depart||s.finish;return `<tr><td colspan="6" style="padding:4px 8px;line-height:1.75">
+  第${['一','二','三'][i]}段陪訊律師<span class="u" style="min-width:300px">${i===0&&has?esc(settings.lawyer):esc(s.lawyer||'')}</span>（請簽名）<br>
+  1.陪訊律師出發時間：${has?dtLine(s.depart):dtLine('')}<br>
+  2.完成時間（回到家或回到事務所）：${has?dtLine(s.finish):dtLine('')}<br>
+  3.律師到場時偵訊開始否？（${ynb(s.startOn)}）／離開時偵訊結束否？（${ynb(s.endOn)}）<br>
+  4.其他回報事項：${esc(s.note||'')}</td></tr>`};
+ return `<div class="pg">
+ <div class="ttl2">法律扶助基金會_${esc(settings.branch)}_分會　陪訊律師－陪訊案件記錄表</div>
+ <div class="c sm">案件編號：${esc(p.no)}</div>
+ <table class="f fx" style="font-size:11pt"><colgroup><col style="width:15%"><col style="width:17%"><col style="width:15%"><col style="width:17%"><col style="width:15%"><col style="width:21%"></colgroup>
+ <tr><td class="h">受扶助人姓名</td><td>${esc(c.name)}</td><td class="h" style="width:15%">受扶助人生日</td><td colspan="3" class="c">${b.y||'　　'}年　${b.m||'　'}月　${b.d||'　'}日</td></tr>
+ <tr><td class="h">受扶助人性別</td><td>${bx(c.gender==='男')}男 ${bx(c.gender==='女')}女</td><td class="h">受扶助人電話</td><td colspan="3">${esc(c.phone)}</td></tr>
+ <tr><td>${bx(c.idType==='身分證')}身分證<br>${bx(c.idType==='居留證')}居留證<br>${bx(c.idType==='護照')}護照號碼</td><td>${esc(c.idNo)}</td><td class="h">身分別</td><td colspan="3" class="sm">${bx(c.mental)}因精神或心智損傷等，疑似無法為完全陳述。<br>${bx(c.abor)}具原住民身份，<span class="u">${esc(c.tribe)}</span>族。<br>${bx(c.civil)}非屬上開身分，但為執行長授權派案之公民不服從案件。</td></tr>
+ <tr><td class="h">案　由</td><td colspan="5">${LAB_CATS.map(x=>`${bx(c.labCats.includes(x))}${x}`).join('　')}<br>${bx(c.labCats.includes('其他'))}其他<span class="u" style="min-width:150px">${c.labCats.includes('其他')?esc(caseLabel()):''}</span>　${bx(c.labCats.includes('所涉罪名不明'))}所涉罪名不明</td></tr>
+ <tr><td class="h"><b>陪訊律師僅到場未進行陪訊之原因</b></td><td colspan="5" class="sm">${bx(nr.includes('a'))}申請人非（疑似）心智障礙且非涉犯本刑三年以上重罪。<br>${bx(nr.includes('b'))}申請人非（疑似）心智障礙且本案非第一次受偵訊。<br>${bx(nr.includes('c'))}<b>申請人非具原住民身份，且有前二項情形之一。</b></td></tr>
+ <tr><td class="h">是否移送地檢署</td><td>${ynb(p.transfer)}</td><td class="h">檢察官是否聲請羈押</td><td>${ynb(p.detainApply)}</td><td class="h">法院是否裁定准予羈押</td><td>${ynb(p.detainGranted)}</td></tr>
+ <tr><td colspan="6" class="c thick" style="border-bottom:0"><b>陪訊時間註記欄</b></td></tr>
+ ${seg(0)}${seg(1)}${seg(2)}
+ <tr><td colspan="6" class="sm">※如律師需先行離開者，請提前30分鐘回報客服中心，並等與新律師交接後再離開。<br>※陪訊完畢後，請律師將本表、委任狀及相關文件以扶助律師線上操作系統上傳予分會，以便結算酬金。<b>粗黑框欄位與酬金支付有關，請確實填寫至單位「分」。</b><br>※如當事人欲申請法律扶助，可請當事人填寫「檢警陪偵後-法律扶助申請書」，<b>並請於陪訊完畢後一週內，以扶助律師線上操作系統回報予分會</b>，以便分會進行後續書面申請作業。</td></tr>
+ </table><div class="ver">1120330版</div></div>`};
+
+FORMS.la=()=>{const c=cur,l=c.la,b=roc(c.birth);const d=l.dis||[];
+ const disRow=(k,t,subs)=>`${bx(d.includes(k))}${t}${subs?'：（請續勾右方選項）':'。'}`;
+ return `<div class="pg">
+ <div class="ttl" style="font-size:15pt;margin:0">財團法人法律扶助基金會${esc(settings.branch)}分會</div>
+ <div class="ttl" style="font-size:15pt;margin:0 0 2px">檢警陪偵後－法律扶助申請書</div>
+ <div style="display:flex;justify-content:space-between" class="sm"><span>＊註記欄位為必填欄位。</span><span>申請日期：${rocDate(l.date)}</span></div>
+ <table class="f fx" style="font-size:10pt;line-height:1.35"><colgroup><col style="width:15%"><col style="width:17%"><col style="width:15%"><col style="width:17%"><col style="width:15%"><col style="width:21%"></colgroup>
+ <tr><td class="h">申請人姓名＊</td><td>${esc(c.name)}</td><td class="h">出生日期＊</td><td>${b.y?`${b.y}.${b.m}.${b.d}`:''}</td><td class="h">性別＊</td><td>${bx(c.gender==='男')}男 ${bx(c.gender==='女')}女</td></tr>
+ <tr><td class="h">身分證號／護照或居留證號＊</td><td>${esc(c.idNo)}</td><td class="h">族群＊</td><td colspan="3">${bx(l.eth==='一般')}一般<br>${bx(l.eth==='原住民')}原住民，族別：<span class="u">${l.eth==='原住民'?esc(l.ethTxt):''}</span><br>${bx(l.eth==='外籍')}外籍，國籍：<span class="u">${l.eth==='外籍'?esc(l.ethTxt):''}</span><br>${bx(l.eth==='歸化')}歸化，原國籍：<span class="u">${l.eth==='歸化'?esc(l.ethTxt):''}</span></td></tr>
+ <tr><td class="h">職業類別</td><td>${esc(l.occ)}</td><td class="h">教育程度</td><td colspan="3">${esc(l.edu)}　　${bx(l.inSchool)}仍在學</td></tr>
+ <tr><td class="h">聯絡電話＊</td><td colspan="5">${esc(l.cphone)}</td></tr>
+ <tr><td class="h">通訊地址＊</td><td colspan="5">${esc(l.mail)}</td></tr>
+ <tr><td class="h">住所地址＊</td><td colspan="5">${esc(l.home)}</td></tr>
+ <tr><td class="h">緊急聯絡人</td><td>${esc(l.emer)}</td><td class="h">與申請人關係</td><td>${esc(l.emerRel)}</td><td class="h">電話或手機</td><td>${esc(l.emerPhone)}</td></tr>
+ <tr><td colspan="6"><b>身心障礙類別（請依證明背面編號或申請人口述勾選，均無者免填）＊</b></td></tr>
+ <tr><td colspan="3" class="sm">${disRow('B1','B1神經系統構造及精神、心智功能',1)}</td><td colspan="3" class="sm">${bx(d.includes('b110'))}意識功能b110 ${bx(d.includes('b117'))}智力功能b117 ${bx(d.includes('b122'))}整體心理社會功能b122<br>${bx(d.includes('b139'))}整體心理功能b139 ${bx(d.includes('b140'))}注意力功能b140 ${bx(d.includes('B1o'))}其他</td></tr>
+ <tr><td colspan="3" class="sm">${disRow('B2','B2眼、耳及相關構造與感官功能及疼痛',1)}</td><td colspan="3" class="sm">${bx(d.includes('b210'))}視覺功能b210 ${bx(d.includes('b230'))}聽覺功能b230 ${bx(d.includes('B2o'))}其他</td></tr>
+ <tr><td colspan="3" class="sm">${disRow('B3','B3涉及聲音與言語構造及其功能',1)}</td><td colspan="3" class="sm">${bx(d.includes('b310'))}嗓音功能b310 ${bx(d.includes('B3o'))}其他</td></tr>
+ <tr><td colspan="6" class="sm">${disRow('B4','B4循環、造血、免疫與呼吸系統構造及其功能')}</td></tr>
+ <tr><td colspan="3" class="sm">${disRow('B5','B5消化、新陳代謝與內分泌系統相關構造及其功能')}</td><td colspan="3" class="sm">${disRow('B7','B7神經、肌肉、骨骼之移動相關構造及其功能')}</td></tr>
+ <tr><td colspan="3" class="sm">${disRow('B6','B6泌尿與生殖系統相關構造及其功能')}</td><td colspan="3" class="sm">${disRow('B8','B8皮膚與相關構造及其功能')}</td></tr>
+ <tr><td class="h">在監押情形</td><td colspan="5">${bx(l.cust)}在監押，<span class="u">${esc(l.jail)}</span>看守所/監獄。舍名：<span class="u">${esc(l.cell)}</span> 房號：<span class="u">${esc(l.room)}</span> 個人編號：<span class="u">${esc(l.pid)}</span><br><span class="sm">＜如有移(出)監時，請儘速來信告知移(出)監後地點及個人編號，或請親友轉達本會，以利聯繫。＞</span></td></tr>
+ <tr><td class="h">經濟狀況＊</td><td colspan="5">一、您目前每月收入為新台幣（以下同）<span class="u" style="min-width:90px">${l.income?Number(l.income).toLocaleString():''}</span>元。<br>二、您目前名下資產為<span class="u" style="min-width:90px">${l.assets?Number(l.assets).toLocaleString():''}</span>元。（如：土地、房屋、存款等）<br>※上開數額若不清楚，請問您是否同意切結符合本會無資力認定標準（每月收入低於22000元、名下資產低於50萬元）？ ${bx(l.agree==='同意')}同意 ${bx(l.agree==='不同意')}不同意。</td></tr>
+ <tr><td colspan="6" style="font-size:8.5pt;line-height:1.3">※本人切結申請書所填載資料及檢具資料皆屬真實，若有不實，基金會得逕撤銷扶助並移送法辦。<br>※基金會以通訊地址為送達地址，若有虛偽陳報情事，影響申請人權益，請自負其責。<br>※本會經您同意取得您的個人資料；您同意將資力證明文件、身分證明以及案情相關資料影本留存於本會；並同意將各類法律扶助服務(含費用)申請書、申請人資力審查詢問表、案件概述單以及上述文件中所載之個人資料，在個人資料保護法及相關法令規定下，依本會隱私權保護政策(可參本會官網公開資訊>>隱私權政策)，蒐集、處理及利用。就本會所保有您的個人資料，您可以書面通知方式行使下列權利：<br>(1)查詢、請求閱覽或製給複製本，但須注意有個人資料保護法第10條但書之除外規定，及個人資料保護法第14條使用者付費之規定。<br>(2)請求補充或更正，但申請人應為相當之釋明。<br>(3)請求停止蒐集、處理、利用或請求刪除，但依相關法令所定，或依個人資料保護法第11條規定，屬本會執行職務或業務所必須者，本會得拒絕之。<div class="sig" style="font-size:12pt"><b>申請人簽名：</b><span class="u" style="min-width:180px">&nbsp;</span></div></td></tr>
+ </table><div class="ver">1120330版</div></div>
+ <div class="pg">
+ <table class="f" style="height:250mm">
+ <tr><td style="background:#eee;height:1%"><b>以下由陪偵律師填寫，並請與陪偵回報資料於<u>陪訊完畢後一週內</u>，以扶助律師線上操作系統回報予分會，謝謝！</b></td></tr>
+ <tr><td style="vertical-align:top;line-height:1.9;font-size:13pt">
+ 1. 申請扶助程序（可複選）：<br>　${bx(l.proc.includes('inv'))}刑事偵查辯護或少年調查保護程序輔佐${bx(l.proc.includes('app'))}對羈押裁定提起抗告<br><br>
+ 2. 申請人是否（疑似）無法為完全陳述：${ynb(l.cannot)}<br><br>
+ 3. 案情概述：<div class="txtblk" style="min-height:70mm;padding-left:1.2em">${esc(l.summary)}</div>
+ 4. 本案是否為「故意犯罪因而發生死亡結果之罪(例：不能安全駕駛致死、肇事逃逸致死、遺棄致死等)」，未來可能行「國民法官法」程序？ ${bx(l.cj==='否')}否、${bx(l.cj==='是')}是<br>
+ 5. 本案是否有扶助之空間：${bx(l.room2==='否')}否、${bx(l.room2==='是')}是（續填下題）<br>
+ 6. 有扶助空間之理由＜簡述即可＞：<div class="txtblk" style="min-height:45mm;padding-left:1.2em">${l.room2==='是'?esc(l.reason):''}</div>
+ <div class="sig"><b>陪偵律師簽名：</b><span class="u" style="min-width:170px">&nbsp;</span></div>
+ </td></tr></table><div class="ver">1120330版</div></div>`};
+
+FORMS.rel=()=>{const c=cur;return `<div class="pg" style="font-size:14pt;line-height:2.1">
+ <div class="ttl" style="letter-spacing:10px;margin:20px 0 26px">刑事解除委任陳報狀</div>
+ <div>案　　　號：${esc(c.caseNo)}</div>
+ <div>股　　　別：${esc(c.stock)}</div>
+ <div>選任辯護人：<span class="u">${esc(settings.lawyer)}</span>律師</div>
+ <div>（即陳報人）　住址：<span class="u">${esc(settings.officeFull)}</span></div>
+ <div>　　　　　　　電話：<span class="u">${esc(settings.phone)}</span></div>
+ <div style="margin-top:20px">為陳報解除委任事：</div>
+ <div style="padding-left:2em">緣陳報人<span class="u">${esc(settings.lawyer)}</span>律師參與財團法人法律扶助基金會<br>
+ ${bx(!c.abor)}「檢警第一次偵訊律師陪同到場」專案<br>${bx(c.abor)}「原住民檢警偵訊律師陪同到場」專案<br>
+ ，受指派為被告（受扶助人）<span class="u">${esc(c.name)}</span>所涉犯之<span class="u">${esc(caseLabel())}</span>等案件，到場陪同訊問（或進行聲押辯護），現因偵訊已經完畢，爰具狀陳報解除偵查中辯護之委任關係，呈請鑒核。</div>
+ <div style="padding-left:2em">謹　　狀</div><div class="c" style="margin-right:20%">公鑒</div>
+ <div style="padding-left:25%;margin-top:30px">陳　報　人：${esc(settings.lawyer)}律師</div>
+ ${dateFoot(c.pz.segs[0].finish||todayStr())}</div>`};
+
+FORMS.stmt=()=>{const c=cur,j=c.jy;return `<div class="pg doc">
+ <div class="ttl">羈押審查辯護意旨</div>
+ <p>法院：${esc(j.court)}　案號：${esc(j.caseNo)}　股別：${esc(j.stock)}</p>
+ <p>被告：${esc(c.name)}　案由：${esc(caseLabel())}　開庭：${rocDT(j.hearing)}</p>
+ <p>辯護人：${esc(settings.lawyer)}律師</p><hr>
+ <div class="txtblk">${esc(j.stmt||genStatement())}</div></div>`};
+
+FORMS.app=()=>{const c=cur,j=c.jy;const quasi=j.maker==='judge';return `<div class="pg doc" style="font-size:13pt;line-height:1.9">
+ <div class="ttl">${quasi?'刑事準抗告狀':'刑事抗告狀'}</div>
+ <p>案　　號：${esc(j.caseNo)}　　股別：${esc(j.stock)}</p>
+ <p>${quasi?'聲請人':'抗告人'}即被告：${esc(c.name)}</p>
+ <p>辯　護　人：${esc(settings.lawyer)}律師　${esc(settings.officeFull)}　${esc(settings.phone)}</p>
+ <p style="margin-top:10px">為${quasi?'不服羈押處分，依法聲請撤銷事':`不服${esc(j.court)}${esc(j.ruleNo)||'○○年度○○字第○○號'}刑事裁定，依法提起抗告事`}：</p>
+ <h4>${quasi?'聲請意旨':'抗告聲明'}</h4>
+ <p class="ind">一、原${quasi?'處分':'裁定'}撤銷。</p>
+ <p class="ind">二、被告准予具保停止羈押（或發回原審法院更為適當之裁定）。</p>
+ <h4>${quasi?'聲請理由':'抗告理由'}</h4>
+ <div class="txtblk ind">${esc(j.appealStmt||genAppeal())}</div>
+ <p style="margin-top:12px">謹　狀</p>
+ <p class="ind">${esc(j.court)}　${quasi?'':'轉呈<br>　'+esc(settings.high)}　公鑒</p>
+ <p style="margin-top:10px">證物名稱及件數：</p>
+ <p style="padding-left:40%;margin-top:16px">具狀人：${esc(c.name)}<br>撰狀人：${esc(settings.lawyer)}律師</p>
+ ${dateFoot(todayStr())}</div>`};
+
+FORMS.sum=()=>{const c=cur,j=c.jy,cr=crimeOf(c);const r=isJy(c)?clockCalc():null;
+ const qa=Object.entries(j.meet||{}).filter(([k,v])=>v&&(v.a||v.d)).map(([k,v])=>{const all=[...MEET_Q.flatMap(g=>g.items),...(cr?cr.q.map((t,i)=>['cq'+i,t]):[])];const it=all.find(x=>x[0]===k);return `<p>・${esc(it?it[1]:k)}：${esc(v.a||'（已問）')}</p>`}).join('');
+ const rn=Object.entries(j.readNote||{}).filter(([k,v])=>v).map(([k,v])=>{const it=READ_CHECK.flatMap(g=>g.items).find(x=>x[0]===k);return `<p>・${esc(it?it[1]:k)}：${esc(v)}</p>`}).join('');
+ return `<div class="pg doc" style="font-size:11pt">
+ <div class="ttl">案件摘要</div>
+ <p>${c.type==='pz'?'檢警陪偵':'羈押審查'}｜當事人：${esc(c.name)}｜案由：${esc(caseLabel())}｜建立：${fmtDT(new Date(c.created))}</p>
+ <p>地點／機關：${esc(c.unit)}　承辦：${esc(c.officer)}　案號：${esc(c.caseNo)} ${esc(c.stock)}</p>
+ ${c.type==='pz'?`<h4>陪訊</h4><p>出發：${rocDT(c.pz.segs[0].depart)}　到場：${rocDT(c.pz.segs[0].arrive)}　完成：${rocDT(c.pz.segs[0].finish)}</p><p>移送：${esc(c.pz.transfer)}　聲押：${esc(c.pz.detainApply)}　准押：${esc(c.pz.detainGranted)}　法扶申請：${esc(c.la.apply)}</p>${c.pz.notes?`<div class="txtblk">${esc(c.pz.notes)}</div>`:''}`:''}
+ ${isJy(c)?`<h4>羈押審查</h4><p>${esc((ENTRIES[j.entry]||{}).n||'')}｜${esc(j.court)} ${esc(j.caseNo)}｜開庭：${rocDT(j.hearing)}</p>
+ ${r?`<p>拘捕：${fmtDT(r.a)}　障礙：${hm(r.obs)}　最遲聲請：${fmtDT(r.deadline)}${r.used!=null?'　計入：'+hm(r.used)+(r.over?'（逾時）':''):''}</p>`:''}
+ ${j.prosEvid?`<p>檢方事證：${esc(j.prosEvid)}</p>`:''}${rn?`<h4>閱卷筆記</h4>${rn}`:''}${qa?`<h4>律見</h4>${qa}`:''}${j.meetNote?`<div class="txtblk">${esc(j.meetNote)}</div>`:''}
+ ${j.stmt?`<h4>開庭陳述</h4><div class="txtblk">${esc(j.stmt)}</div>`:''}
+ <h4>結果</h4><p>${esc(j.result)} ${esc(j.resultNote)}</p>`:''}
+ </div>`};
+
+/* ================== 事件 ================== */
+function onField(e){
+  const t=e.target;if(!cur&&!t.dataset.s)return;
+  if(t.dataset.s){settings[t.dataset.s]=t.value;saveSettings();return}
+  if(t.dataset.p!=null){
+    let v=t.value; if(t.type==='radio'&&!t.checked)return;
+    setP(cur,t.dataset.p,v);
+  }else if(t.dataset.m){
+    const arr=(getP(cur,t.dataset.m)||[]).slice();const i=arr.indexOf(t.value);
+    if(t.checked&&i<0)arr.push(t.value);if(!t.checked&&i>=0)arr.splice(i,1);setP(cur,t.dataset.m,arr);
+  }else if(t.dataset.b){setP(cur,t.dataset.b,t.checked)}
+  else if(t.dataset.sel){const s=cur._sel||[];const i=s.indexOf(t.dataset.sel);if(t.checked&&i<0)s.push(t.dataset.sel);if(!t.checked&&i>=0)s.splice(i,1);cur._sel=s}
+  else return;
+  save();
+  if(t.dataset.re&&e.type==='change'){const y=window.scrollY;render();window.scrollTo(0,y)}
+  if(t.dataset.p==='name'&&cur)$('#hTitle').textContent=(cur.name||'（未填姓名）')+'｜'+(cur.type==='pz'?'檢警陪偵':'羈押審查');
+}
+document.addEventListener('input',e=>{if(e.target.type!=='radio'&&e.target.type!=='checkbox')onField(e)});
+document.addEventListener('change',onField);
+
+function buildPrint(){
+  const order=['wt','rec','la','rel','stmt','app','sum'];
+  const sel=(cur._sel||[]).filter(k=>FORMS[k]);
+  const avail=[...document.querySelectorAll('[data-sel]')].map(x=>x.dataset.sel);
+  return order.filter(k=>sel.includes(k)&&avail.includes(k)).map(k=>FORMS[k]()).join('');
+}
+function download(name,text){
+  const blob=new Blob([text],{type:'application/json'});const u=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();
+  setTimeout(()=>{URL.revokeObjectURL(u);a.remove()},1000);
+}
+document.addEventListener('click',e=>{
+  const b=e.target.closest('button,[data-tab]');if(!b)return;
+  const d=b.dataset;
+  if(d.tab){tab=d.tab;render();window.scrollTo(0,0);return}
+  if(d.new){cur=newCase(d.new);tab='basic';view='case';save();render();return}
+  if(d.open){cur=cases[d.open];tab='basic';view='case';render();window.scrollTo(0,0);return}
+  if(d.now){setP(cur,d.now,nowLocal());save();const y=window.scrollY;render();window.scrollTo(0,y);toast('已記錄 '+nowLocal().slice(11));return}
+  if(d.delcase){const c=cases[d.delcase];if(c&&confirm(`整件刪除「${c.name||'未命名'}」？\n陪偵、羈押、法扶申請等全部資料都會刪除，無法復原。${c.exported?'':'\n\n注意：此案尚未匯出備份。'}`)){delete cases[d.delcase];if(cur&&cur.id===d.delcase)cur=null;save();render();toast('已刪除')}return}
+  if(d.delobs!=null){cur.jy.clk.obs.splice(+d.delobs,1);save();render();return}
+  const act=d.act;if(!act)return;
+  const rr=()=>{const y=window.scrollY;render();window.scrollTo(0,y)};
+  switch(act){
+   case 'home':view='list';cur=null;render();break;
+   case 'settings':view='set';render();break;
+   case 'autoLab':{const cr=crimeOf(cur);if(cr){cur.labCats=cr.lab.length?cr.lab.slice():['其他']}save();rr();break}
+   case 'autoNR':cur.pz.noReason=autoNoReason(cur);save();rr();break;
+   case 'clrNR':cur.pz.noReason=[];save();rr();break;
+   case 'laFill':{const l=cur.la;l.eth=l.eth||(cur.abor?'原住民':cur.foreign?'外籍':'一般');if(cur.abor&&!l.ethTxt)l.ethTxt=cur.tribe;if(cur.foreign&&!l.ethTxt)l.ethTxt=cur.nation;l.cphone=l.cphone||cur.phone;l.cannot=l.cannot||(cur.mental?'是':'否');if(!l.proc.length)l.proc=['inv'];if(cur.pz.detainGranted==='是'&&!l.proc.includes('app'))l.proc.push('app');save();rr();toast('已帶入');break}
+   case 'laSum':if(cur.la.summary&&!confirm('覆蓋現有案情概述？'))break;cur.la.summary=genSummary();save();rr();break;
+   case 'addObs':cur.jy.clk.obs=cur.jy.clk.obs||[];cur.jy.clk.obs.push({t:OBS_TYPES[2],s:'',e:''});save();rr();break;
+   case 'genStmt':if(cur.jy.stmt&&!confirm('重新產生會覆蓋你修改過的陳述稿，確定？'))break;cur.jy.stmt=genStatement();save();rr();toast('已產生');break;
+   case 'genApp':if(cur.jy.appealStmt&&!confirm('覆蓋現有抗告理由？'))break;cur.jy.appealStmt=genAppeal();save();rr();break;
+   case 'court':{$('#cvText').textContent=cur.jy.stmt||genStatement();$('#courtView').classList.add('on');break}
+   case 'copyStmt':{const t=cur.jy.stmt||genStatement();(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>toast('已複製')).catch(()=>toast('無法複製，請長按文字框選取'));break}
+   case 'preview':{const h=buildPrint();$('#pv').innerHTML=h?`<div class="prev">${h}</div>`:'<p class="muted">請先勾選表單</p>';$('#pv').scrollIntoView({behavior:'smooth'});break}
+   case 'print':{const h=buildPrint();if(!h){toast('請先勾選表單');break}$('#printArea').innerHTML=h;const old=document.title;document.title=fileTag(cur);setTimeout(()=>{window.print();setTimeout(()=>{document.title=old},500)},100);break}
+   case 'exp':exportCases([cur],fileTag(cur)+'.json');break;
+   case 'expAll':exportCases(Object.values(cases),`陪偵羈押-全部案件-${todayStr()}.json`);break;
+   case 'unlock':unlock($('#pinIn').value);break;
+   case 'wipe':if(confirm('清除這台裝置上的全部案件？')&&confirm('再次確認：清除後無法復原。')){localStorage.removeItem(ENC_KEY);localStorage.removeItem(KEY);cases={};locked=false;sessKey=null;view='list';render();toast('已清除')}break;
+   case 'setPin':{const a=$('#pin1').value,b2=$('#pin2').value;if(a.length<6){toast('密碼至少6碼');break}if(a!==b2){toast('兩次密碼不同');break}toast('加密中…');setPin(a).then(()=>{lastAct=Date.now();render();toast('已設定密碼並加密')});break}
+   case 'rmPin':if(confirm('移除密碼後，案件資料會改為未加密存放。確定？')){removePin();render();toast('已移除密碼')}break;
+   case 'del':if(confirm(`刪除「${cur.name||'未命名'}」？刪除後無法復原（已匯出的案件檔不受影響）。`)){delete cases[cur.id];cur=null;view='list';save();render()}break;
+  }
+});
+document.addEventListener('change',e=>{
+  if(e.target.id!=='impFile')return;const f=e.target.files[0];e.target.value='';if(!f)return;
+  const rd=new FileReader();rd.onload=async()=>{let o;try{o=JSON.parse(rd.result)}catch(err){toast('檔案格式不符');return}
+    try{if(o.enc){const pw=prompt('請輸入此案件檔的密碼');if(pw===null)return;toast('解密中…');o=await decPw(pw,o.enc)}}catch(err){toast('密碼錯誤，無法開啟');return}
+    const arr=o.cases||[];let n=0;
+    arr.forEach(c=>{if(!c.id)return;if(cases[c.id]&&cases[c.id].updated>c.updated&&!confirm(`「${c.name}」在這台裝置上的版本較新，仍要用匯入檔覆蓋嗎？`))return;cases[c.id]=c;n++});
+    const c0=cur;cur=null;save();cur=c0;toast(`已匯入 ${n} 件`);render()};rd.readAsText(f);
+});
+$('#hLock').onclick=()=>lockNow();
+$('#hBack').onclick=()=>{if(locked)return;view='list';cur=null;render();window.scrollTo(0,0)};
+$('#hLib').onclick=()=>{if(locked)return;if(view==='lib'){view=cur?'case':'list'}else{view='lib'}render();window.scrollTo(0,0)};
+$('#cvClose').onclick=()=>$('#courtView').classList.remove('on');
+let cvSize=24;$('#cvBig').onclick=()=>{cvSize+=3;$('#cvText').style.fontSize=cvSize+'px'};$('#cvSmall').onclick=()=>{cvSize=Math.max(15,cvSize-3);$('#cvText').style.fontSize=cvSize+'px'};
+window.addEventListener('afterprint',()=>{$('#printArea').innerHTML=''});
+
+load();render();
+</script>
+</body>
+</html>
