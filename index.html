@@ -107,6 +107,9 @@ hr.s{border:0;border-top:1px solid var(--line);margin:12px 0}
 .modal{position:fixed;inset:0;z-index:70;background:rgba(40,20,30,.45);display:flex;align-items:center;justify-content:center;padding:20px}
 .modal .box{background:#fff;border-radius:16px;padding:18px;max-width:420px;width:100%}
 .item .chip{font-size:12px}
+.qa-row{display:flex;gap:6px;align-items:flex-start;margin-top:6px}
+.qa-lb{flex:0 0 2.6em;font-weight:700;padding-top:10px;color:var(--ink)}
+.qa-in{min-height:44px!important;resize:none;overflow:hidden}
 
 /* ===== 列印表單 ===== */
 @page{size:A4;margin:14mm 14mm 12mm}
@@ -263,6 +266,20 @@ const ENTRIES={
  bail:{n:'具保停止羈押聲請',tips:['§110：被告、辯護人得隨時具保聲請停止羈押','§114：有該條各款情形，具保聲請停止羈押不得駁回','其餘情形法院有裁量權，回到比例原則','具體提出保證金額、限制住居地址、報到等條件（§111、§116-2）']},
  habeas:{n:'提審聲請併羈押聲請',tips:['提審審查逮捕拘禁之合法性（提審法§1）','提審與羈押聲請同時繫屬時，高院114年法律座談會刑事類提案第24號採先審提審','提審期間不計入24小時（§93-1 I ⑧）','留意法院仍應核發提審票並通知逮捕拘禁機關']}
 };
+
+
+/* 偵查機關地址：2026-11-09 自臺東縣警察局各分局官網「轄區分駐（派出）所」、臺東地檢署官網核對 */
+const UNITS_CHECKED='2026-11-09';
+const AGENCIES=[
+ {g:'臺灣臺東地方檢察署',items:[['臺灣臺東地方檢察署','950231臺東市浙江路310號','089-310180']]},
+ {g:'臺東縣警察局（本局）',items:[['臺東縣警察局','95043臺東縣臺東市中山路268號','089-322034']]},
+ {g:'臺東分局',items:[['臺東分局','臺東市桂林北路110號','089-322306'],['中興派出所','臺東市桂林北路110號','089-322127'],['寶桑派出所','臺東市四維路1段369號','089-322126'],['馬蘭派出所','臺東市更生路678號','089-226492'],['南王派出所','臺東市更生北路624號','089-223817'],['永樂派出所','臺東市正氣北路915號','089-227818'],['富岡派出所','臺東市松江路一段431號','089-281040'],['豐里派出所','臺東市中華路3段126號','089-327815'],['知本派出所','臺東市大和路11號','089-512614'],['溫泉派出所','臺東市青海路4段343號','089-512379'],['東興派出所','臺東市中興路6段796號','089-381714'],['利嘉派出所','臺東縣卑南鄉利嘉村利嘉路617號','089-382819'],['卑南分駐所','臺東縣卑南鄉賓朗村賓朗路440號','089-223820'],['初鹿派出所','臺東縣卑南鄉初鹿村梅原路83號','089-571126'],['綠島分駐所','臺東縣綠島鄉南寮村11鄰南寮160號','089-672521'],['公館派出所','臺東縣綠島鄉公館村98號','089-672564'],['蘭嶼分駐所','臺東縣蘭嶼鄉椰油村1鄰31號','089-732011'],['建蘭派出所','臺東縣蘭嶼鄉紅頭村50號','089-732560'],['東清派出所','臺東縣蘭嶼鄉東清村3號','089-732975'],['朗島派出所','臺東縣蘭嶼鄉朗島村1鄰13號','089-732131']]},
+ {g:'關山分局',items:[['關山分局','95651臺東縣關山鎮中正路27號','089-811001'],['關山派出所','臺東縣關山鎮中福里1鄰中正路27號','089-811284'],['電光派出所','臺東縣關山鎮電光里中興42號','089-951041'],['池上分駐所','臺東縣池上鄉福原村10鄰中山路211號','089-862004'],['錦安派出所','臺東縣池上鄉萬安村1鄰萬安12號','089-862344'],['鹿野分駐所','臺東縣鹿野鄉鹿野村9鄰中華路2段57號','089-551114'],['瑞源派出所','臺東縣鹿野鄉瑞源村6鄰瑞景路一段386號','089-581134'],['瑞豐派出所','臺東縣鹿野鄉瑞豐村10鄰中山路171號','089-811419'],['延平分駐所','臺東縣延平鄉桃源村1鄰昇平路74號','089-561245'],['鸞山派出所','臺東縣延平鄉鸞山村1鄰鸞山路21號','089-568079'],['武陵派出所','臺東縣延平鄉武陵村1鄰明野路10號','089-551164'],['海端分駐所','臺東縣海端鄉海端村5鄰山界路17號','089-931354'],['初來派出所','臺東縣海端鄉海端村8鄰初來70號','089-931004'],['崁頂派出所','臺東縣海端鄉崁頂村1鄰中福路25號','089-811418'],['龍泉派出所','臺東縣海端鄉廣原村3鄰龍泉1-2號','089-861344'],['霧鹿派出所','臺東縣海端鄉霧鹿村1鄰霧鹿1號','089-935024'],['利稻派出所','臺東縣海端鄉利稻村1鄰文化路2號','089-938064'],['向陽派出所','臺東縣海端鄉利稻村向陽1號','0988-095763']]},
+ {g:'成功分局',items:[['成功分局','臺東縣成功鎮公民路87號','089-851001'],['新豐派出所','臺東縣成功鎮公民路87號','089-851054'],['忠孝派出所','臺東縣成功鎮成廣路9號','089-871444'],['都歷派出所','臺東縣成功鎮信義里都歷路46號','089-841290'],['長濱分駐所','臺東縣長濱鄉長濱村六鄰長濱41號','089-831034'],['寧埔派出所','臺東縣長濱鄉寧埔村寧埔08號','089-801257'],['樟原派出所','臺東縣長濱鄉樟原村1鄰10號','089-881027'],['東河分駐所','臺東縣東河鄉東河村南東河368號','089-896010'],['都蘭派出所','臺東縣東河鄉都蘭村都蘭248號','089-531209'],['泰源派出所','臺東縣東河鄉泰源村11鄰本部落281號','089-891014']]},
+ {g:'大武分局',items:[['大武分局','臺東縣大武鄉大武村大武街52號','089-791001'],['大武派出所','臺東縣大武鄉大武村大武街52號','089-791125'],['尚武派出所','臺東縣大武鄉尚武村客庄路9號','089-791105'],['太麻里分駐所','臺東縣太麻里鄉泰和村太麻里街142號','089-781134'],['美和派出所','臺東縣太麻里鄉美和村6鄰84-1號','089-512542'],['金崙派出所','臺東縣太麻里鄉金崙村439號','089-771086'],['多良派出所','臺東縣太麻里鄉多良村大溪262號','089-761368'],['金峰分駐所','臺東縣金峰鄉嘉蘭村30號','089-751204'],['達仁分駐所','臺東縣達仁鄉復興路100號','089-702247'],['新化派出所','臺東縣達仁鄉新化村101號','089-791749'],['森永派出所','臺東縣達仁鄉森永村6號','089-702297'],['台坂派出所','臺東縣達仁鄉臺板村13-1號','089-761047'],['土坂派出所','臺東縣達仁鄉土板村107號','089-761027']]}
+];
+const unitFull=(g,n)=>g==='臺灣臺東地方檢察署'||g==='臺東縣警察局（本局）'?n:(n.endsWith('分局')?'臺東縣警察局'+n:'臺東縣警察局'+g+n);
+function findAgency(name){for(const a of AGENCIES)for(const it of a.items)if(unitFull(a.g,it[0])===name)return {g:a.g,n:it[0],addr:it[1],tel:it[2]};return null}
 
 /* 陪訊檢核 */
 const PZ_CHECK=[
@@ -440,13 +457,13 @@ document.addEventListener('visibilitychange',()=>{const m=Number(settings.autoLo
 const needsExp=c=>!c.exported||c.updated>c.exported;
 const maskName=n=>n?n[0]+'○'.repeat(Math.max(1,n.length-1)):'未命名';
 const fileTag=c=>`${todayStr().replace(/-/g,'').slice(2)}-${maskName(c.name)}-${c.type==='pz'?'陪偵':'羈押'}`;
-function showDownload(name,text,note){
-  const blob=new Blob([text],{type:'application/json'});const u=URL.createObjectURL(blob);
-  let file=null;try{file=new File([blob],name,{type:'application/json'})}catch(e){}
+function showDownload(name,text,note,mime='application/json',title='案件檔已準備好'){
+  const blob=new Blob([text],{type:mime});const u=URL.createObjectURL(blob);
+  let file=null;try{file=new File([blob],name,{type:mime})}catch(e){}
   const canShare=!!(file&&navigator.canShare&&navigator.canShare({files:[file]}));
   const canPick=!!window.showSaveFilePicker;
   const m=document.createElement('div');m.className='modal';
-  m.innerHTML=`<div class="box"><h2 style="margin:0 0 8px;color:var(--pri);font-size:18px">案件檔已準備好</h2><p class="muted">${esc(note)}</p><p style="word-break:break-all">${esc(name)}</p>
+  m.innerHTML=`<div class="box"><h2 style="margin:0 0 8px;color:var(--pri);font-size:18px">${esc(title)}</h2><p class="muted">${esc(note)}</p><p style="word-break:break-all">${esc(name)}</p>
   <div class="btns">${canShare?'<button class="btn pri" data-share="1">儲存到檔案（選資料夾）</button>':''}${canPick?'<button class="btn pri" data-pick="1">選擇資料夾儲存</button>':''}<a class="btn ${canShare||canPick?'':'pri'}" href="${u}" download="${esc(name)}" style="text-decoration:none">${canShare||canPick?'下載':'儲存檔案'}</a><button class="btn" data-close="1">關閉</button></div>
   <p class="muted">${canShare?'iPad、iPhone：點「儲存到檔案」→ 選「儲存到檔案」→ 切到 Dropbox → 選資料夾 → 儲存。之後會記得上次的資料夾。':canPick?'電腦：點「選擇資料夾儲存」，直接選 Dropbox 裡的資料夾。':'下載後再移到 Dropbox 的案件資料夾。'}</p></div>`;
   const close=()=>{m.remove();setTimeout(()=>URL.revokeObjectURL(u),1000)};
@@ -454,7 +471,7 @@ function showDownload(name,text,note){
     const t=e.target;
     if(t.dataset.close||t===m){close();return}
     if(t.dataset.share){try{await navigator.share({files:[file],title:name});close();toast('已送出')}catch(err){if(err&&err.name!=='AbortError')toast('無法開啟分享，請改用「下載」')}return}
-    if(t.dataset.pick){try{const h=await window.showSaveFilePicker({suggestedName:name,types:[{description:'案件檔',accept:{'application/json':['.json']}}]});const w=await h.createWritable();await w.write(blob);await w.close();close();toast('已儲存')}catch(err){if(err&&err.name!=='AbortError')toast('儲存失敗，請改用「下載」')}return}
+    if(t.dataset.pick){try{const ext=name.slice(name.lastIndexOf('.'));const h=await window.showSaveFilePicker({suggestedName:name,types:[{description:title,accept:{[mime]:[ext]}}]});const w=await h.createWritable();await w.write(blob);await w.close();close();toast('已儲存')}catch(err){if(err&&err.name!=='AbortError')toast('儲存失敗，請改用「下載」')}return}
   });
   document.body.appendChild(m);
 }
@@ -503,11 +520,29 @@ function checklist(groups,store,noteStore){
   return groups.map(g=>`<h3>${g.g}</h3>`+g.items.map(([id,t,law])=>`<div class="ck"><input type="checkbox" data-b="${store}.${id}" ${getP(cur,store+'.'+id)?'checked':''}><div class="t">${esc(t)}${law?`<small>${esc(law)}</small>`:''}${noteStore?`<input type="text" data-p="${noteStore}.${id}" value="${esc(getP(cur,noteStore+'.'+id))}" placeholder="筆記">`:''}</div></div>`).join('')).join('');
 }
 
+
+function locBlock(){
+  const c=cur;const recent=(settings.recentUnits||[]).filter(findAgency).slice(0,5);
+  const g=c.unitG||'';const grp=AGENCIES.find(a=>a.g===g);
+  const ag=findAgency(c.unit);
+  return `<div class="f"><span class="muted">${c.type==='pz'?'陪偵地點':'偵查機關'}</span>
+  ${recent.length?`<div class="opts" style="margin-bottom:8px">${recent.map(n=>`<label style="cursor:pointer"><input type="radio" name="recentU" data-recent="${esc(n)}" ${c.unit===n?'checked':''}>${esc(n.replace('臺東縣警察局',''))}</label>`).join('')}</div>`:''}
+  <div class="row c2">
+   <label class="f"><span>分局／機關</span><select data-unitg="1"><option value="">請選擇</option>${AGENCIES.map(a=>`<option ${g===a.g?'selected':''}>${esc(a.g)}</option>`).join('')}<option value="__other" ${g==='__other'?'selected':''}>其他（自行輸入）</option></select></label>
+   ${grp?`<label class="f"><span>單位</span><select data-unitn="1"><option value="">請選擇</option>${grp.items.map(it=>{const full=unitFull(grp.g,it[0]);return `<option value="${esc(full)}" ${c.unit===full?'selected':''}>${esc(it[0])}</option>`}).join('')}</select></label>`:''}
+  </div>
+  ${g==='__other'||(!grp&&c.unit&&!ag)?F.text('unit','機關名稱（自行輸入）'):''}
+  ${F.text('unitAddr','地址（可修改）')}
+  ${ag?`<p class="muted" style="margin-top:-6px">電話：<a href="tel:${esc(ag.tel)}">${esc(ag.tel)}</a>　地址資料核對日：${UNITS_CHECKED}</p>`:''}
+  </div>`;
+}
+
 /* ================== 版面 ================== */
 const TABS=[
  {id:'basic',l:'基本資料',s:()=>true},
  {id:'pz',l:'陪訊紀錄',s:c=>c.type==='pz'},
  {id:'check',l:'陪訊檢核',s:c=>c.type==='pz'},
+ {id:'qa',l:'詢問筆記',s:()=>true},
  {id:'la',l:'法扶申請',s:c=>c.type==='pz'},
  {id:'jyin',l:'羈押接案',s:isJy,jy:1},
  {id:'read',l:'閱卷',s:isJy,jy:1},
@@ -529,6 +564,7 @@ function render(){
   tb.innerHTML=vis.map(t=>`<button class="${t.id===tab?'on':''} ${t.jy?'jy':''}" data-tab="${t.id}">${t.l}</button>`).join('');
   const fn=R[tab];$('#main').innerHTML=(needsExp(cur)?`<div class="note w" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><span style="flex:1;min-width:180px">${cur.exported?'本案有更新尚未匯出':'本案尚未匯出備份'}</span><button class="btn sm" data-act="exp">立即匯出</button></div>`:'')+(fn?fn():'');
   const on=tb.querySelector('.on');if(on)on.scrollIntoView({inline:'center',block:'nearest'});
+  document.querySelectorAll('.qa-in').forEach(autoGrow);
 }
 
 /* ---------- 案件列表 ---------- */
@@ -623,7 +659,8 @@ R.basic=()=>{
   ${F.sel('crime','案由類型',[['','請選擇'],...CRIMES.map(c=>[c.k,c.n])],{re:1})}
   ${F.text('caseName','案由（填入委任狀）',{ph:cr&&cr.k!=='other'?cr.n.replace(/（.*）/,''):'例：詐欺'})}
   ${cur.type==='pz'?`<div class="btns"><button class="btn sm" data-act="autoLab">依案由自動勾選</button></div>${F.multi('labCats','陪訊記錄表案由（可複選）',[...LAB_CATS,'其他','所涉罪名不明'])}`:''}
-  <div class="row c2">${F.text('unit',cur.type==='pz'?'地點（分局、派出所、地檢署）':'偵查機關')}${F.text('officer','承辦員警、檢察官')}</div>
+  ${locBlock()}
+  ${F.text('officer','承辦員警、檢察官')}
   <div class="row c2">${F.text('caseNo','偵查案號')}${F.text('stock','股別')}</div>
   </div>
   ${cr?crimeCard(cr,true):''}`;
@@ -699,6 +736,52 @@ R.la=()=>{
   ${l.room2==='是'?F.area('la.reason','6. 有扶助空間之理由（簡述即可）'):''}
   </div>`;
 };
+
+
+/* ---------- 詢問／訊問筆記 ---------- */
+const QA_KINDS=['警詢','檢察官訊問','檢察事務官詢問','法官訊問（羈押）','其他'];
+function qaData(){if(!cur.qa)cur.qa={sessions:[],cur:0};return cur.qa}
+function qaSess(){const q=qaData();return q.sessions[q.cur]||null}
+function newSession(kind){const q=qaData();q.sessions.push({id:uid(),kind,start:nowLocal(),end:'',place:cur.unit||'',officer:'',items:[{q:'',a:'',note:'',t:nowLocal().slice(11)}]});q.cur=q.sessions.length-1}
+R.qa=()=>{
+  const q=qaData();const s=qaSess();
+  const tabsH=q.sessions.map((x,i)=>`<button class="btn sm ${i===q.cur?'pri':''}" data-qsess="${i}">${i+1}. ${esc(x.kind)}</button>`).join('');
+  let h=`<div class="card"><h2>詢問／訊問筆記</h2>
+  <div class="note"><p>本頁為律師自行記錄之問答，非機關製作之正式筆錄。</p><p>在「答」按 Enter 自動新增下一組問答；在「問」按 Enter 跳到「答」。要在框內換行請按 Shift＋Enter。</p></div>
+  ${q.sessions.length?`<div class="btns">${tabsH}</div>`:''}
+  <div class="btns">${QA_KINDS.map(k=>`<button class="btn sm" data-qnew="${k}">＋${k}</button>`).join('')}</div></div>`;
+  if(!s)return h+'<p class="muted">按上方按鈕開始一段詢問紀錄。</p>';
+  const P=`qa.sessions.${q.cur}`;
+  h+=`<div class="card"><h2>${esc(s.kind)}</h2>
+   <div class="row c2">${F.dt(P+'.start','開始時間')}${F.dt(P+'.end','結束時間')}</div>
+   <div class="row c2">${F.text(P+'.place','地點')}${F.text(P+'.officer','詢（訊）問人')}</div>
+  </div>
+  <div class="card"><h2>問答（${s.items.length}組）</h2>
+  ${s.items.map((it,i)=>`<div class="qa-it" style="border-top:1px dashed var(--line);padding:10px 0">
+    <div style="display:flex;justify-content:space-between;align-items:center"><b style="color:var(--pri)">第${i+1}組</b><span class="muted">${esc(it.t||'')}　<button class="btn sm" data-qnote="${i}">${it.note||it._n?'收合註記':'＋註記'}</button> <button class="btn sm bad" data-qdel="${i}">刪除</button></span></div>
+    <div class="qa-row"><span class="qa-lb">問：</span><textarea class="qa-in" rows="1" data-p="${P}.items.${i}.q" data-qi="${i}" data-qf="q">${esc(it.q)}</textarea></div>
+    <div class="qa-row"><span class="qa-lb">答：</span><textarea class="qa-in" rows="1" data-p="${P}.items.${i}.a" data-qi="${i}" data-qf="a">${esc(it.a)}</textarea></div>
+    ${it.note||it._n?`<div class="qa-row"><span class="qa-lb" style="color:var(--acc)">註：</span><textarea class="qa-in" rows="1" data-p="${P}.items.${i}.note" placeholder="律師觀察、程序異議、提示證據、待查事項">${esc(it.note)}</textarea></div>`:''}
+  </div>`).join('')}
+  <div class="btns"><button class="btn pri" data-act="qaAdd">＋新增問答</button></div></div>
+  <div class="card"><h2>輸出</h2><div class="btns"><button class="btn" data-act="qaCopy">複製全文</button><button class="btn" data-act="qaWord">下載 Word 檔</button><button class="btn bad" data-act="qaDelSess">刪除這段紀錄</button></div><p class="muted">列印或存 PDF：到「表單輸出」勾選「詢問筆記」。</p></div>`;
+  return h;
+};
+function qaText(sessions){
+  return sessions.map(s=>{let t=`【${s.kind}】${s.start?rocDT(s.start):''}${s.end?'～'+rocDT(s.end).replace(/^\d+年\d+月\d+日/,''):''}\n地點：${s.place||''}　詢（訊）問人：${s.officer||''}\n`;
+    s.items.filter(it=>it.q||it.a||it.note).forEach(it=>{t+=`問：${it.q}\n答：${it.a}\n`;if(it.note)t+=`（註：${it.note}）\n`});return t}).join('\n');
+}
+function autoGrow(el){el.style.height='auto';el.style.height=el.scrollHeight+'px'}
+document.addEventListener('keydown',e=>{
+  const t=e.target;if(!t.classList||!t.classList.contains('qa-in')||e.key!=='Enter'||e.shiftKey||e.isComposing||e.keyCode===229)return;
+  const i=+t.dataset.qi,f=t.dataset.qf;if(isNaN(i))return;
+  e.preventDefault();
+  if(f==='q'){const n=document.querySelector(`.qa-in[data-qi="${i}"][data-qf="a"]`);n&&n.focus();return}
+  const s=qaSess();
+  if(i===s.items.length-1){s.items.push({q:'',a:'',note:'',t:nowLocal().slice(11)});save();const y=window.scrollY;render();window.scrollTo(0,y)}
+  const n=document.querySelector(`.qa-in[data-qi="${i+1}"][data-qf="q"]`);if(n){n.focus();n.scrollIntoView({block:'center'})}
+});
+document.addEventListener('input',e=>{if(e.target.classList&&e.target.classList.contains('qa-in'))autoGrow(e.target)});
 
 /* ---------- 羈押 ---------- */
 R.jyin=()=>{
@@ -832,6 +915,7 @@ R.forms=()=>{
   const list=[];
   if(pz){list.push(['wt','偵查中辯護專用委任狀']);list.push(['rec','陪訊案件記錄表']);if(cur.la.apply==='是')list.push(['la','檢警陪偵後－法律扶助申請書（2頁）']);list.push(['rel','刑事解除委任陳報狀'])}
   if(jy){list.push(['stmt','羈押審查開庭陳述（辯護意旨）']);if(cur.jy.appeal==='是')list.push(['app','刑事抗告狀'])}
+  if(cur.qa&&cur.qa.sessions.length)list.push(['qa','詢問／訊問筆記']);
   list.push(['sum','案件摘要（存檔用）']);
   if(!cur._sel)cur._sel=list.map(x=>x[0]);
   return `<div class="card"><h2>表單輸出</h2>
@@ -1040,13 +1124,17 @@ FORMS.app=()=>{const c=cur,j=c.jy;const quasi=j.maker==='judge';return `<div cla
  <p style="padding-left:40%;margin-top:16px">具狀人：${esc(c.name)}<br>撰狀人：${esc(settings.lawyer)}律師</p>
  ${dateFoot(todayStr())}</div>`};
 
+FORMS.qa=()=>{const c=cur;return `<div class="pg doc" style="font-size:12pt;line-height:1.8">
+ <div class="ttl">詢問／訊問筆記</div>
+ <p class="sm">當事人：${esc(c.name)}　案由：${esc(caseLabel())}　記錄人：${esc(settings.lawyer)}律師<br>※本紀錄為律師陪同在場時自行記錄，非機關製作之正式筆錄。</p><hr>
+ <div class="txtblk">${esc(qaText(c.qa.sessions))}</div></div>`};
 FORMS.sum=()=>{const c=cur,j=c.jy,cr=crimeOf(c);const r=isJy(c)?clockCalc():null;
  const qa=Object.entries(j.meet||{}).filter(([k,v])=>v&&(v.a||v.d)).map(([k,v])=>{const all=[...MEET_Q.flatMap(g=>g.items),...(cr?cr.q.map((t,i)=>['cq'+i,t]):[])];const it=all.find(x=>x[0]===k);return `<p>・${esc(it?it[1]:k)}：${esc(v.a||'（已問）')}</p>`}).join('');
  const rn=Object.entries(j.readNote||{}).filter(([k,v])=>v).map(([k,v])=>{const it=READ_CHECK.flatMap(g=>g.items).find(x=>x[0]===k);return `<p>・${esc(it?it[1]:k)}：${esc(v)}</p>`}).join('');
  return `<div class="pg doc" style="font-size:11pt">
  <div class="ttl">案件摘要</div>
  <p>${c.type==='pz'?'檢警陪偵':'羈押審查'}｜當事人：${esc(c.name)}｜案由：${esc(caseLabel())}｜建立：${fmtDT(new Date(c.created))}</p>
- <p>地點／機關：${esc(c.unit)}　承辦：${esc(c.officer)}　案號：${esc(c.caseNo)} ${esc(c.stock)}</p>
+ <p>地點／機關：${esc(c.unit)}${c.unitAddr?'（'+esc(c.unitAddr)+'）':''}　承辦：${esc(c.officer)}　案號：${esc(c.caseNo)} ${esc(c.stock)}</p>
  ${c.type==='pz'?`<h4>陪訊</h4><p>出發：${rocDT(c.pz.segs[0].depart)}　到場：${rocDT(c.pz.segs[0].arrive)}　完成：${rocDT(c.pz.segs[0].finish)}</p><p>移送：${esc(c.pz.transfer)}　聲押：${esc(c.pz.detainApply)}　准押：${esc(c.pz.detainGranted)}　法扶申請：${esc(c.la.apply)}</p>${c.pz.notes?`<div class="txtblk">${esc(c.pz.notes)}</div>`:''}`:''}
  ${isJy(c)?`<h4>羈押審查</h4><p>${esc((ENTRIES[j.entry]||{}).n||'')}｜${esc(j.court)} ${esc(j.caseNo)}｜開庭：${rocDT(j.hearing)}</p>
  ${r?`<p>拘捕：${fmtDT(r.a)}　障礙：${hm(r.obs)}　最遲聲請：${fmtDT(r.deadline)}${r.used!=null?'　計入：'+hm(r.used)+(r.over?'（逾時）':''):''}</p>`:''}
@@ -1055,9 +1143,15 @@ FORMS.sum=()=>{const c=cur,j=c.jy,cr=crimeOf(c);const r=isJy(c)?clockCalc():null
  <h4>結果</h4><p>${esc(j.result)} ${esc(j.resultNote)}</p>`:''}
  </div>`};
 
+function selUnit(full){const a=findAgency(full);if(!a){cur.unit='';cur.unitAddr='';return}cur.unit=full;cur.unitG=a.g;cur.unitAddr=a.addr;
+  const r=(settings.recentUnits||[]).filter(x=>x!==full);r.unshift(full);settings.recentUnits=r.slice(0,8);saveSettings();
+  if(cur.qa)cur.qa.sessions.forEach(s=>{if(!s.place)s.place=full})}
 /* ================== 事件 ================== */
 function onField(e){
-  const t=e.target;if(!cur&&!t.dataset.s)return;
+  const t=e.target;
+  if(cur&&e.type==='change'&&t.dataset.unitg){cur.unitG=t.value;if(t.value==='__other'){if(findAgency(cur.unit)){cur.unit='';cur.unitAddr=''}}else{const g=AGENCIES.find(a=>a.g===t.value);if(g&&g.items.length===1){selUnit(unitFull(g.g,g.items[0][0]))}}save();const y=window.scrollY;render();window.scrollTo(0,y);return}
+  if(cur&&e.type==='change'&&t.dataset.unitn){selUnit(t.value);save();const y=window.scrollY;render();window.scrollTo(0,y);return}
+  if(cur&&e.type==='change'&&t.dataset.recent){selUnit(t.dataset.recent);save();const y=window.scrollY;render();window.scrollTo(0,y);return}if(!cur&&!t.dataset.s)return;
   if(t.dataset.s){settings[t.dataset.s]=t.value;saveSettings();return}
   if(t.dataset.p!=null){
     let v=t.value; if(t.type==='radio'&&!t.checked)return;
@@ -1076,7 +1170,7 @@ document.addEventListener('input',e=>{if(e.target.type!=='radio'&&e.target.type!
 document.addEventListener('change',onField);
 
 function buildPrint(){
-  const order=['wt','rec','la','rel','stmt','app','sum'];
+  const order=['wt','rec','la','rel','qa','stmt','app','sum'];
   const sel=(cur._sel||[]).filter(k=>FORMS[k]);
   const avail=[...document.querySelectorAll('[data-sel]')].map(x=>x.dataset.sel);
   return order.filter(k=>sel.includes(k)&&avail.includes(k)).map(k=>FORMS[k]()).join('');
@@ -1094,6 +1188,10 @@ document.addEventListener('click',e=>{
   if(d.open){cur=cases[d.open];tab='basic';view='case';render();window.scrollTo(0,0);return}
   if(d.now){setP(cur,d.now,nowLocal());save();const y=window.scrollY;render();window.scrollTo(0,y);toast('已記錄 '+nowLocal().slice(11));return}
   if(d.delcase){const c=cases[d.delcase];if(c&&confirm(`整件刪除「${c.name||'未命名'}」？\n陪偵、羈押、法扶申請等全部資料都會刪除，無法復原。${c.exported?'':'\n\n注意：此案尚未匯出備份。'}`)){delete cases[d.delcase];if(cur&&cur.id===d.delcase)cur=null;save();render();toast('已刪除')}return}
+  if(d.qnew){newSession(d.qnew);save();render();{const n=document.querySelector('.qa-in[data-qi="0"][data-qf="q"]');n&&n.focus()}return}
+  if(d.qsess!=null){qaData().cur=+d.qsess;save();render();return}
+  if(d.qdel!=null){const s=qaSess();const it=s.items[+d.qdel];if((it.q||it.a||it.note)&&!confirm('刪除這組問答？'))return;s.items.splice(+d.qdel,1);if(!s.items.length)s.items.push({q:'',a:'',note:'',t:nowLocal().slice(11)});save();const y=window.scrollY;render();window.scrollTo(0,y);return}
+  if(d.qnote!=null){const it=qaSess().items[+d.qnote];if(it.note||it._n){if(it.note&&!confirm('收合會清除這則註記，確定？'))return;it.note='';it._n=false}else it._n=true;save();const y=window.scrollY;render();window.scrollTo(0,y);return}
   if(d.delobs!=null){cur.jy.clk.obs.splice(+d.delobs,1);save();render();return}
   const act=d.act;if(!act)return;
   const rr=()=>{const y=window.scrollY;render();window.scrollTo(0,y)};
@@ -1105,6 +1203,11 @@ document.addEventListener('click',e=>{
    case 'clrNR':cur.pz.noReason=[];save();rr();break;
    case 'laFill':{const l=cur.la;l.eth=l.eth||(cur.abor?'原住民':cur.foreign?'外籍':'一般');if(cur.abor&&!l.ethTxt)l.ethTxt=cur.tribe;if(cur.foreign&&!l.ethTxt)l.ethTxt=cur.nation;l.cphone=l.cphone||cur.phone;l.cannot=l.cannot||(cur.mental?'是':'否');if(!l.proc.length)l.proc=['inv'];if(cur.pz.detainGranted==='是'&&!l.proc.includes('app'))l.proc.push('app');save();rr();toast('已帶入');break}
    case 'laSum':if(cur.la.summary&&!confirm('覆蓋現有案情概述？'))break;cur.la.summary=genSummary();save();rr();break;
+   case 'qaAdd':{const s=qaSess();s.items.push({q:'',a:'',note:'',t:nowLocal().slice(11)});save();rr();const n=document.querySelector(`.qa-in[data-qi="${s.items.length-1}"][data-qf="q"]`);if(n){n.focus();n.scrollIntoView({block:'center'})}break}
+   case 'qaCopy':{const t=qaText([qaSess()]);(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>toast('已複製')).catch(()=>toast('無法複製'));break}
+   case 'qaWord':{const s=qaSess();const body=`<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word"><head><meta charset="utf-8"><style>body{font-family:"標楷體","DFKai-SB",serif;font-size:14pt;line-height:1.8}p{margin:0}</style></head><body><p style="text-align:center;font-size:18pt"><b>詢問／訊問筆記</b></p><p style="font-size:11pt">當事人：${esc(cur.name)}　案由：${esc(caseLabel())}　記錄人：${esc(settings.lawyer)}律師</p><p style="font-size:11pt">※本紀錄為律師陪同在場時自行記錄，非機關製作之正式筆錄。</p><br>${esc(qaText([s])).split('\n').map(l=>`<p>${l||'&nbsp;'}</p>`).join('')}</body></html>`;
+     showDownload(`${fileTag(cur)}-${s.kind}筆記.doc`,'﻿'+body,'Word 可直接開啟編輯。','application/msword','詢問筆記已準備好');break}
+   case 'qaDelSess':{const q=qaData();if(!confirm('刪除這整段詢問紀錄？無法復原。'))break;q.sessions.splice(q.cur,1);q.cur=Math.max(0,q.cur-1);save();rr();break}
    case 'addObs':cur.jy.clk.obs=cur.jy.clk.obs||[];cur.jy.clk.obs.push({t:OBS_TYPES[2],s:'',e:''});save();rr();break;
    case 'genStmt':if(cur.jy.stmt&&!confirm('重新產生會覆蓋你修改過的陳述稿，確定？'))break;cur.jy.stmt=genStatement();save();rr();toast('已產生');break;
    case 'genApp':if(cur.jy.appealStmt&&!confirm('覆蓋現有抗告理由？'))break;cur.jy.appealStmt=genAppeal();save();rr();break;
