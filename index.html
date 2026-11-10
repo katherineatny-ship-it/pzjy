@@ -107,6 +107,9 @@ hr.s{border:0;border-top:1px solid var(--line);margin:12px 0}
 .modal{position:fixed;inset:0;z-index:70;background:rgba(40,20,30,.45);display:flex;align-items:center;justify-content:center;padding:20px}
 .modal .box{background:#fff;border-radius:16px;padding:18px;max-width:420px;width:100%}
 .item .chip{font-size:12px}
+.sigbox{border:1px dashed var(--pri2);border-radius:12px;padding:8px;margin:0 0 12px;background:#fff}
+.sigc{width:100%;height:180px;display:block;touch-action:none;background:repeating-linear-gradient(#fff,#fff 149px,#e9cfdb 149px,#e9cfdb 150px);border-radius:8px;cursor:crosshair}
+.sigbox.done img{max-height:120px;max-width:100%;display:block;margin:4px 0}
 .qa-row{display:flex;gap:6px;align-items:flex-start;margin-top:6px}
 .qa-lb{flex:0 0 2.6em;font-weight:700;padding-top:10px;color:var(--ink)}
 .qa-in{min-height:44px!important;resize:none;overflow:hidden}
@@ -565,6 +568,7 @@ function render(){
   const fn=R[tab];$('#main').innerHTML=(needsExp(cur)?`<div class="note w" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><span style="flex:1;min-width:180px">${cur.exported?'本案有更新尚未匯出':'本案尚未匯出備份'}</span><button class="btn sm" data-act="exp">立即匯出</button></div>`:'')+(fn?fn():'');
   const on=tb.querySelector('.on');if(on)on.scrollIntoView({inline:'center',block:'nearest'});
   document.querySelectorAll('.qa-in').forEach(autoGrow);
+  initSigPads();
 }
 
 /* ---------- 案件列表 ---------- */
@@ -724,7 +728,9 @@ R.la=()=>{
   <h3>經濟狀況</h3>
   <div class="row c2">${F.text('la.income','每月收入（元）',{type:'number'})}${F.text('la.assets','名下資產（元）',{type:'number'})}</div>
   ${F.radio('la.agree','數額不清楚時，是否同意切結符合無資力標準（月收入低於22000元、資產低於50萬元）',['同意','不同意'])}
-  <div class="note">申請人簽名欄留白，列印後由當事人簽名；或於現場紙本申請書簽名後上傳。</div>
+  <h3>申請人簽名</h3>
+  <p class="muted">請當事人確認上方內容（含切結及個資同意事項）後，用手指或 Apple Pencil 在框內簽名。</p>
+  ${sigPad('la.sigApp','申請人簽名')}
   </div>
   <div class="card"><h2>陪偵律師填寫</h2>
   ${F.multi('la.proc','1. 申請扶助程序（可複選）',[['inv','刑事偵查辯護或少年調查保護程序輔佐'],['app','對羈押裁定提起抗告']])}
@@ -734,6 +740,8 @@ R.la=()=>{
   ${F.radio('la.cj','4. 是否為故意犯罪因而發生死亡結果之罪（未來可能行國民法官程序）',['否','是'])}
   ${F.radio('la.room2','5. 本案是否有扶助之空間',['否','是'],{re:1})}
   ${l.room2==='是'?F.area('la.reason','6. 有扶助空間之理由（簡述即可）'):''}
+  <h3>陪偵律師簽名</h3>
+  ${sigPad('la.sigLaw','陪偵律師簽名')}
   </div>`;
 };
 
@@ -782,6 +790,36 @@ document.addEventListener('keydown',e=>{
   const n=document.querySelector(`.qa-in[data-qi="${i+1}"][data-qf="q"]`);if(n){n.focus();n.scrollIntoView({block:'center'})}
 });
 document.addEventListener('input',e=>{if(e.target.classList&&e.target.classList.contains('qa-in'))autoGrow(e.target)});
+
+
+/* ---------- 手寫簽名 ---------- */
+function sigPad(p,label){
+  const v=getP(cur,p);
+  if(v&&v.img)return `<div class="sigbox done"><img src="${v.img}" alt="${esc(label)}"><div class="muted">${esc(label)}｜${esc(v.t||'')}</div><div class="btns"><button class="btn sm bad" data-sigclr="${p}">清除重簽</button></div></div>`;
+  return `<div class="sigbox"><canvas class="sigc" data-sig="${p}"></canvas><div class="btns"><button class="btn sm" data-sigundo="${p}">清除</button><button class="btn sm pri" data-sigok="${p}">確認簽名</button></div></div>`;
+}
+const sigStrokes={};
+function initSigPads(){
+  document.querySelectorAll('canvas.sigc').forEach(cv=>{
+    const p=cv.dataset.sig;const dpr=window.devicePixelRatio||1;const w=cv.clientWidth,h=cv.clientHeight;
+    cv.width=w*dpr;cv.height=h*dpr;const ctx=cv.getContext('2d');ctx.scale(dpr,dpr);ctx.lineCap='round';ctx.lineJoin='round';ctx.strokeStyle='#111';
+    sigStrokes[p]=[];let drawing=false,last=null;
+    const pos=e=>{const r=cv.getBoundingClientRect();return [e.clientX-r.left,e.clientY-r.top,e.pressure||0.5]};
+    cv.addEventListener('pointerdown',e=>{e.preventDefault();cv.setPointerCapture(e.pointerId);drawing=true;last=pos(e);sigStrokes[p].push(1)});
+    cv.addEventListener('pointermove',e=>{if(!drawing)return;e.preventDefault();const pts=e.getCoalescedEvents?e.getCoalescedEvents():[e];
+      pts.forEach(ev=>{const q=pos(ev);ctx.lineWidth=e.pointerType==='pen'?1.2+q[2]*2.6:2.4;ctx.beginPath();ctx.moveTo(last[0],last[1]);ctx.lineTo(q[0],q[1]);ctx.stroke();last=q})});
+    const end=()=>{drawing=false};cv.addEventListener('pointerup',end);cv.addEventListener('pointercancel',end);
+  });
+}
+function sigCapture(cv){
+  // 裁切空白後輸出
+  const c=cv.getContext('2d'),W=cv.width,H=cv.height,d=c.getImageData(0,0,W,H).data;let x0=W,y0=H,x1=-1,y1=-1;
+  for(let y=0;y<H;y+=2)for(let x=0;x<W;x+=2){if(d[(y*W+x)*4+3]>10){if(x<x0)x0=x;if(x>x1)x1=x;if(y<y0)y0=y;if(y>y1)y1=y}}
+  if(x1<0)return null;const m=12;x0=Math.max(0,x0-m);y0=Math.max(0,y0-m);x1=Math.min(W,x1+m);y1=Math.min(H,y1+m);
+  const o=document.createElement('canvas');const sc=Math.min(1,500/(x1-x0));o.width=Math.round((x1-x0)*sc);o.height=Math.round((y1-y0)*sc);
+  o.getContext('2d').drawImage(cv,x0,y0,x1-x0,y1-y0,0,0,o.width,o.height);return o.toDataURL('image/png');
+}
+const sigImg=(v,h)=>v&&v.img?`<img src="${v.img}" style="height:${h}px;max-width:200px;vertical-align:middle">`:'';
 
 /* ---------- 羈押 ---------- */
 R.jyin=()=>{
@@ -1070,7 +1108,7 @@ FORMS.la=()=>{const c=cur,l=c.la,b=roc(c.birth);const d=l.dis||[];
  <tr><td colspan="3" class="sm">${disRow('B6','B6泌尿與生殖系統相關構造及其功能')}</td><td colspan="3" class="sm">${disRow('B8','B8皮膚與相關構造及其功能')}</td></tr>
  <tr><td class="h">在監押情形</td><td colspan="5">${bx(l.cust)}在監押，<span class="u">${esc(l.jail)}</span>看守所/監獄。舍名：<span class="u">${esc(l.cell)}</span> 房號：<span class="u">${esc(l.room)}</span> 個人編號：<span class="u">${esc(l.pid)}</span><br><span class="sm">＜如有移(出)監時，請儘速來信告知移(出)監後地點及個人編號，或請親友轉達本會，以利聯繫。＞</span></td></tr>
  <tr><td class="h">經濟狀況＊</td><td colspan="5">一、您目前每月收入為新台幣（以下同）<span class="u" style="min-width:90px">${l.income?Number(l.income).toLocaleString():''}</span>元。<br>二、您目前名下資產為<span class="u" style="min-width:90px">${l.assets?Number(l.assets).toLocaleString():''}</span>元。（如：土地、房屋、存款等）<br>※上開數額若不清楚，請問您是否同意切結符合本會無資力認定標準（每月收入低於22000元、名下資產低於50萬元）？ ${bx(l.agree==='同意')}同意 ${bx(l.agree==='不同意')}不同意。</td></tr>
- <tr><td colspan="6" style="font-size:8.5pt;line-height:1.3">※本人切結申請書所填載資料及檢具資料皆屬真實，若有不實，基金會得逕撤銷扶助並移送法辦。<br>※基金會以通訊地址為送達地址，若有虛偽陳報情事，影響申請人權益，請自負其責。<br>※本會經您同意取得您的個人資料；您同意將資力證明文件、身分證明以及案情相關資料影本留存於本會；並同意將各類法律扶助服務(含費用)申請書、申請人資力審查詢問表、案件概述單以及上述文件中所載之個人資料，在個人資料保護法及相關法令規定下，依本會隱私權保護政策(可參本會官網公開資訊>>隱私權政策)，蒐集、處理及利用。就本會所保有您的個人資料，您可以書面通知方式行使下列權利：<br>(1)查詢、請求閱覽或製給複製本，但須注意有個人資料保護法第10條但書之除外規定，及個人資料保護法第14條使用者付費之規定。<br>(2)請求補充或更正，但申請人應為相當之釋明。<br>(3)請求停止蒐集、處理、利用或請求刪除，但依相關法令所定，或依個人資料保護法第11條規定，屬本會執行職務或業務所必須者，本會得拒絕之。<div class="sig" style="font-size:12pt"><b>申請人簽名：</b><span class="u" style="min-width:180px">&nbsp;</span></div></td></tr>
+ <tr><td colspan="6" style="font-size:8.5pt;line-height:1.3">※本人切結申請書所填載資料及檢具資料皆屬真實，若有不實，基金會得逕撤銷扶助並移送法辦。<br>※基金會以通訊地址為送達地址，若有虛偽陳報情事，影響申請人權益，請自負其責。<br>※本會經您同意取得您的個人資料；您同意將資力證明文件、身分證明以及案情相關資料影本留存於本會；並同意將各類法律扶助服務(含費用)申請書、申請人資力審查詢問表、案件概述單以及上述文件中所載之個人資料，在個人資料保護法及相關法令規定下，依本會隱私權保護政策(可參本會官網公開資訊>>隱私權政策)，蒐集、處理及利用。就本會所保有您的個人資料，您可以書面通知方式行使下列權利：<br>(1)查詢、請求閱覽或製給複製本，但須注意有個人資料保護法第10條但書之除外規定，及個人資料保護法第14條使用者付費之規定。<br>(2)請求補充或更正，但申請人應為相當之釋明。<br>(3)請求停止蒐集、處理、利用或請求刪除，但依相關法令所定，或依個人資料保護法第11條規定，屬本會執行職務或業務所必須者，本會得拒絕之。<div class="sig" style="font-size:12pt"><b>申請人簽名：</b>${l.sigApp&&l.sigApp.img?sigImg(l.sigApp,42):'<span class="u" style="min-width:180px">&nbsp;</span>'}</div></td></tr>
  </table><div class="ver">1120330版</div></div>
  <div class="pg">
  <table class="f" style="height:250mm">
@@ -1082,7 +1120,7 @@ FORMS.la=()=>{const c=cur,l=c.la,b=roc(c.birth);const d=l.dis||[];
  4. 本案是否為「故意犯罪因而發生死亡結果之罪(例：不能安全駕駛致死、肇事逃逸致死、遺棄致死等)」，未來可能行「國民法官法」程序？ ${bx(l.cj==='否')}否、${bx(l.cj==='是')}是<br>
  5. 本案是否有扶助之空間：${bx(l.room2==='否')}否、${bx(l.room2==='是')}是（續填下題）<br>
  6. 有扶助空間之理由＜簡述即可＞：<div class="txtblk" style="min-height:45mm;padding-left:1.2em">${l.room2==='是'?esc(l.reason):''}</div>
- <div class="sig"><b>陪偵律師簽名：</b><span class="u" style="min-width:170px">&nbsp;</span></div>
+ <div class="sig"><b>陪偵律師簽名：</b>${l.sigLaw&&l.sigLaw.img?sigImg(l.sigLaw,46):'<span class="u" style="min-width:170px">&nbsp;</span>'}</div>
  </td></tr></table><div class="ver">1120330版</div></div>`};
 
 FORMS.rel=()=>{const c=cur;return `<div class="pg" style="font-size:14pt;line-height:2.1">
@@ -1188,6 +1226,9 @@ document.addEventListener('click',e=>{
   if(d.open){cur=cases[d.open];tab='basic';view='case';render();window.scrollTo(0,0);return}
   if(d.now){setP(cur,d.now,nowLocal());save();const y=window.scrollY;render();window.scrollTo(0,y);toast('已記錄 '+nowLocal().slice(11));return}
   if(d.delcase){const c=cases[d.delcase];if(c&&confirm(`整件刪除「${c.name||'未命名'}」？\n陪偵、羈押、法扶申請等全部資料都會刪除，無法復原。${c.exported?'':'\n\n注意：此案尚未匯出備份。'}`)){delete cases[d.delcase];if(cur&&cur.id===d.delcase)cur=null;save();render();toast('已刪除')}return}
+  if(d.sigundo){const cv=document.querySelector(`canvas[data-sig="${d.sigundo}"]`);if(cv){cv.getContext('2d').clearRect(0,0,cv.width,cv.height)}return}
+  if(d.sigok){const cv=document.querySelector(`canvas[data-sig="${d.sigok}"]`);const img=cv&&sigCapture(cv);if(!img){toast('尚未簽名');return}setP(cur,d.sigok,{img,t:fmtDT(new Date())});save();const y=window.scrollY;render();window.scrollTo(0,y);toast('已存簽名');return}
+  if(d.sigclr){if(!confirm('清除這個簽名並重簽？'))return;setP(cur,d.sigclr,null);save();const y=window.scrollY;render();window.scrollTo(0,y);return}
   if(d.qnew){newSession(d.qnew);save();render();{const n=document.querySelector('.qa-in[data-qi="0"][data-qf="q"]');n&&n.focus()}return}
   if(d.qsess!=null){qaData().cur=+d.qsess;save();render();return}
   if(d.qdel!=null){const s=qaSess();const it=s.items[+d.qdel];if((it.q||it.a||it.note)&&!confirm('刪除這組問答？'))return;s.items.splice(+d.qdel,1);if(!s.items.length)s.items.push({q:'',a:'',note:'',t:nowLocal().slice(11)});save();const y=window.scrollY;render();window.scrollTo(0,y);return}
