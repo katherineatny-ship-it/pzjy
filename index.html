@@ -546,6 +546,7 @@ const TABS=[
  {id:'pz',l:'陪訊紀錄',s:c=>c.type==='pz'},
  {id:'check',l:'陪訊檢核',s:c=>c.type==='pz'},
  {id:'qa',l:'詢問筆記',s:()=>true},
+ {id:'ts',l:'提審',s:()=>true},
  {id:'la',l:'法扶申請',s:c=>c.type==='pz'},
  {id:'jyin',l:'羈押接案',s:isJy,jy:1},
  {id:'read',l:'閱卷',s:isJy,jy:1},
@@ -820,6 +821,86 @@ function sigCapture(cv){
   o.getContext('2d').drawImage(cv,x0,y0,x1-x0,y1-y0,0,0,o.width,o.height);return o.toDataURL('image/png');
 }
 const sigImg=(v,h)=>v&&v.img?`<img src="${v.img}" style="height:${h}px;max-width:200px;vertical-align:middle">`:'';
+
+
+/* ---------- 提審（提審法第1、2、5、8、9條；2026-11-17 核對） ---------- */
+function tsData(){if(!cur.ts)cur.ts={};return cur.ts}
+function tsEval(){
+  const t=tsData();const pro=[],con=[],alt=[];let verdict='';
+  if(t.q1==='法院'){con.push('由法院裁定羈押或依法院裁判剝奪人身自由，得裁定駁回（提審法§5 I ①⑤）');alt.push('法院羈押裁定 → 10日內抗告（刑訴§404 I ②、§406）');}
+  if(t.q1==='執行'){con.push('係受確定判決發監執行，屬經法院裁判而剝奪人身自由（提審法§5 I ⑤）');alt.push('執行指揮不當 → 向諭知裁判之法院聲明異議（刑訴§484；高院114抗1670意旨）');}
+  if(t.q2==='已回復'){con.push('已回復自由（含具保、責付、限制住居、釋放），得裁定駁回（提審法§5 I ③；高院114抗1246意旨）');}
+  const lawful={'拘票':'持拘票拘提','通緝':'通緝犯逮捕（刑訴§87 I）','現行犯':'現行犯或準現行犯逮捕（刑訴§88），以執法者當時有相當理由為已足','緊急拘提':'緊急拘提並已報請檢察官補發拘票（刑訴§88-1 II）'};
+  if(lawful[t.q3])con.push('逮捕形式上有法律依據：'+lawful[t.q3]+'；依法逮捕拘禁者不得聲請提審（院解字第4034號；高院114抗1670意旨）');
+  if(t.q3==='無依據')pro.push('逮捕拘禁無法律依據（無令狀、非現行犯、非通緝、未補拘票）');
+  if(t.q3==='緊急未補')pro.push('緊急拘提後未報請檢察官補發拘票，依刑訴§88-1 II 應即釋放');
+  if(t.q4==='未告知')pro.push('未依提審法§2 以書面告知逮捕原因、時間、地點及得聲請提審之意旨（違反者另有提審法§11 I 刑責）');
+  if(t.q5==='逾時')pro.push('逮捕後逾24小時未移送法院（憲法§8 II）');
+  if(t.q6==='逾越')pro.push('拘禁地點或方式逾越法定範圍');
+  const sub=(t.q7||[]).filter(x=>x!=='程序');
+  if(sub.length)con.push('當事人想爭執的「'+sub.join('、')+'」不屬提審審查範圍（提審法§8 I 僅審查逮捕拘禁之法律依據、原因及程序）');
+  if(sub.includes('沒有犯罪'))alt.push('有無犯罪 → 本案辯護、偵查中陳述及請求調查有利證據');
+  if(sub.includes('警察不當'))alt.push('員警不當行為 → 另案究責、聲請勘驗密錄器、爭執證據能力');
+  const blocked=t.q1==='法院'||t.q1==='執行'||t.q2==='已回復';
+  if(!t.q1||!t.q2||!t.q3)verdict='待評估';
+  else if(blocked)verdict='無聲請實益';
+  else if(pro.length)verdict='有聲請實益';
+  else verdict='原則上無聲請實益';
+  return {verdict,pro,con,alt};
+}
+const TS_SPOKEN={'有聲請實益':'這次逮捕在程序上可能有問題，聲請提審有實益','無聲請實益':'依你目前的狀況，法院會依法駁回提審聲請，聲請沒有實益','原則上無聲請實益':'這次逮捕在形式上有法律依據，聲請提審的實益不大','待評估':'（評估結果）'};
+function tsScript(){
+  const r=tsEval();const nm=cur.name?cur.name+'，':'';
+  return `${nm}我是法律扶助基金會指派的${settings.lawyer}律師。現在跟你說明什麼是「提審」，你有不懂的地方可以隨時問我。
+
+一、依照提審法，一個人被法院以外的機關，例如警察、檢察官逮捕或拘禁的時候，本人或親友可以向法院聲請提審。法院收到後，要在24小時內通知逮捕的機關把你帶到法院，由法官審查這次逮捕、拘禁合不合法。
+
+二、提審只審查「逮捕、拘禁的程序」，例如有沒有法律依據、有沒有依法用書面告訴你逮捕的原因、時間、地點和可以聲請提審。提審不審查你到底有沒有犯罪，也不會因此撤銷案件或判你無罪。
+
+三、法官審查後，如果認為逮捕、拘禁不合法，會裁定立刻釋放你；如果認為合法，會駁回聲請，把你送回原來的機關，案件照常進行。
+
+四、如果你已經被釋放、交保、責付或限制住居，或是被法院裁定羈押、正在執行法院判決的刑期，法院可以直接駁回聲請。
+
+五、聲請提審不用繳任何費用。要不要聲請，由你自己決定。要提醒你的是，提審進行的時間不算在警察和檢察官原本的24小時裡面，所以聲請後，你可能會被留置比較久。
+
+依照你剛才告訴我的經過，我的評估是：${TS_SPOKEN[r.verdict]}。
+
+請問你要不要聲請提審？`;
+}
+R.ts=()=>{
+  const t=tsData(),r=tsEval();
+  const cls={'有聲請實益':'g','無聲請實益':'w','原則上無聲請實益':'w','待評估':''}[r.verdict];
+  return `<div class="card"><h2>提審說明（宣讀用）</h2>
+  <div class="note"><p>檢察官或員警詢問是否聲請提審時，先完成下方「要件審查」，再宣讀說明詞，評估結果會自動帶入。</p></div>
+  <div class="txtblk" style="white-space:pre-wrap;background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px;font-size:17px;line-height:1.85">${esc(tsScript())}</div>
+  <div class="btns" style="margin-top:10px"><button class="btn pri" data-act="tsBig">大字宣讀模式</button><button class="btn" data-act="tsCopy">複製</button></div>
+  ${F.bool('ts.read','已向當事人宣讀說明',{re:1})}${t.read?F.dt('ts.readAt','宣讀時間'):''}
+  </div>
+  <div class="card"><h2>要件審查</h2>
+  ${F.radio('ts.q1','1. 逮捕、拘禁的機關',['法院以外（警察、檢察官、海巡、移民署等）','法院','執行'].map(x=>x),{re:1}).replace('>法院<','>法院裁定羈押<').replace('>執行<','>確定判決發監執行<')}
+  ${F.radio('ts.q2','2. 目前狀態',['仍受拘束','已回復'],{re:1}).replace('>仍受拘束<','>仍在拘束中（派出所、地檢署、解送中）<').replace('>已回復<','>已釋放、具保、責付或限制住居<')}
+  ${F.sel('ts.q3','3. 逮捕、拘禁的依據',[['','請選擇'],['拘票','持拘票拘提'],['通緝','通緝犯逮捕（刑訴§87）'],['現行犯','現行犯／準現行犯（刑訴§88）'],['緊急拘提','緊急拘提，已補拘票（刑訴§88-1）'],['緊急未補','緊急拘提，未補拘票'],['無依據','無法律依據／不明（自願到場後遭留置等）']],{re:1})}
+  ${F.radio('ts.q4','4. 有無收到提審法§2 書面告知（逮捕原因、時間、地點、得聲請提審）',['已書面告知','未告知'],{re:1}).replace('>未告知<','>未告知或內容不全<')}
+  ${F.radio('ts.q5','5. 自逮捕時起是否逾24小時仍未移送法院',['未逾','逾時'],{re:1}).replace('>逾時<','>已逾24小時<')}
+  ${F.radio('ts.q6','6. 拘禁地點、方式',['正常','逾越'],{re:1}).replace('>逾越<','>逾越法定範圍<')}
+  ${F.multi('ts.q7','7. 當事人想爭執的重點（可複選）',[['程序','逮捕程序'],['沒有犯罪','我沒有犯罪／東西是我的'],['警察不當','警察態度、毆打、違法搜索']],{re:1})}
+  <div class="note ${cls}"><p><b>評估：${esc(r.verdict)}</b></p>
+   ${r.pro.map(x=>`<p>✓ ${esc(x)}</p>`).join('')}${r.con.map(x=>`<p>✗ ${esc(x)}</p>`).join('')}
+   ${r.alt.length?`<p style="margin-top:6px"><b>其他救濟途徑</b></p>${r.alt.map(x=>`<p>→ ${esc(x)}</p>`).join('')}`:''}</div>
+  <div class="note"><p>・提審只審程序、採自由證明；勝訴效果是「裁定釋放」，不是無罪，也不等於證據排除，避免當事人有錯誤期待。</p><p>・提審期間不計入24小時（刑訴§93-1 I ⑧）。若同時移送羈押，實務先審提審（高院114年法律座談會刑事類提案第24號）。</p><p>・向逮捕、拘禁地之地方法院聲請，書狀或言詞皆可（提審法§1、§3），免徵費用。駁回裁定得於送達後10日內抗告（提審法§10）。</p></div>
+  </div>
+  <div class="card"><h2>當事人決定</h2>
+  ${F.radio('ts.dec','當事人意願',['不聲請提審','聲請提審','需要再考慮'],{re:1})}
+  ${t.dec?F.dt('ts.decAt','表示時間'):''}
+  ${t.dec==='聲請提審'?`<div class="row c2">${F.text('ts.court','受聲請法院',{ph:'逮捕、拘禁地之地方法院'})}${F.text('ts.how','聲請方式',{ph:'例：言詞向檢察官表示、書狀'})}</div>`:''}
+  ${F.area('ts.note','補充紀錄')}
+  ${t.dec?`<div class="note"><p><b>回覆檢察官／員警參考用語</b></p><p>${esc(tsReply())}</p><div class="btns"><button class="btn sm" data-act="tsCopyReply">複製</button></div></div>`:''}
+  </div>`;
+};
+function tsReply(){const t=tsData();
+  if(t.dec==='不聲請提審')return `辯護人已向被告說明提審制度之目的、審查範圍及效果，被告表示了解，不聲請提審。`;
+  if(t.dec==='聲請提審')return `辯護人已向被告說明提審制度之目的、審查範圍及效果，被告表示要聲請提審，請依提審法規定轉送${t.court||'逮捕、拘禁地之地方法院'}。`;
+  return `辯護人已向被告說明提審制度，被告表示需要再考慮。`;}
 
 /* ---------- 羈押 ---------- */
 R.jyin=()=>{
@@ -1173,6 +1254,7 @@ FORMS.sum=()=>{const c=cur,j=c.jy,cr=crimeOf(c);const r=isJy(c)?clockCalc():null
  <div class="ttl">案件摘要</div>
  <p>${c.type==='pz'?'檢警陪偵':'羈押審查'}｜當事人：${esc(c.name)}｜案由：${esc(caseLabel())}｜建立：${fmtDT(new Date(c.created))}</p>
  <p>地點／機關：${esc(c.unit)}${c.unitAddr?'（'+esc(c.unitAddr)+'）':''}　承辦：${esc(c.officer)}　案號：${esc(c.caseNo)} ${esc(c.stock)}</p>
+ ${c.ts&&(c.ts.dec||c.ts.read)?`<h4>提審</h4><p>說明：${c.ts.read?'已宣讀 '+esc(rocDT(c.ts.readAt)):'未記錄'}　評估：${esc(tsEval().verdict)}　當事人：${esc(c.ts.dec||'')} ${esc(rocDT(c.ts.decAt))}</p>${c.ts.note?`<p>${esc(c.ts.note)}</p>`:''}`:''}
  ${c.type==='pz'?`<h4>陪訊</h4><p>出發：${rocDT(c.pz.segs[0].depart)}　到場：${rocDT(c.pz.segs[0].arrive)}　完成：${rocDT(c.pz.segs[0].finish)}</p><p>移送：${esc(c.pz.transfer)}　聲押：${esc(c.pz.detainApply)}　准押：${esc(c.pz.detainGranted)}　法扶申請：${esc(c.la.apply)}</p>${c.pz.notes?`<div class="txtblk">${esc(c.pz.notes)}</div>`:''}`:''}
  ${isJy(c)?`<h4>羈押審查</h4><p>${esc((ENTRIES[j.entry]||{}).n||'')}｜${esc(j.court)} ${esc(j.caseNo)}｜開庭：${rocDT(j.hearing)}</p>
  ${r?`<p>拘捕：${fmtDT(r.a)}　障礙：${hm(r.obs)}　最遲聲請：${fmtDT(r.deadline)}${r.used!=null?'　計入：'+hm(r.used)+(r.over?'（逾時）':''):''}</p>`:''}
@@ -1244,6 +1326,9 @@ document.addEventListener('click',e=>{
    case 'clrNR':cur.pz.noReason=[];save();rr();break;
    case 'laFill':{const l=cur.la;l.eth=l.eth||(cur.abor?'原住民':cur.foreign?'外籍':'一般');if(cur.abor&&!l.ethTxt)l.ethTxt=cur.tribe;if(cur.foreign&&!l.ethTxt)l.ethTxt=cur.nation;l.cphone=l.cphone||cur.phone;l.cannot=l.cannot||(cur.mental?'是':'否');if(!l.proc.length)l.proc=['inv'];if(cur.pz.detainGranted==='是'&&!l.proc.includes('app'))l.proc.push('app');save();rr();toast('已帶入');break}
    case 'laSum':if(cur.la.summary&&!confirm('覆蓋現有案情概述？'))break;cur.la.summary=genSummary();save();rr();break;
+   case 'tsBig':{$('#cvText').textContent=tsScript();$('#courtView').classList.add('on');break}
+   case 'tsCopy':{(navigator.clipboard?navigator.clipboard.writeText(tsScript()):Promise.reject()).then(()=>toast('已複製')).catch(()=>toast('無法複製'));break}
+   case 'tsCopyReply':{(navigator.clipboard?navigator.clipboard.writeText(tsReply()):Promise.reject()).then(()=>toast('已複製')).catch(()=>toast('無法複製'));break}
    case 'qaAdd':{const s=qaSess();s.items.push({q:'',a:'',note:'',t:nowLocal().slice(11)});save();rr();const n=document.querySelector(`.qa-in[data-qi="${s.items.length-1}"][data-qf="q"]`);if(n){n.focus();n.scrollIntoView({block:'center'})}break}
    case 'qaCopy':{const t=qaText([qaSess()]);(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>toast('已複製')).catch(()=>toast('無法複製'));break}
    case 'qaWord':{const s=qaSess();const body=`<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word"><head><meta charset="utf-8"><style>body{font-family:"標楷體","DFKai-SB",serif;font-size:14pt;line-height:1.8}p{margin:0}</style></head><body><p style="text-align:center;font-size:18pt"><b>詢問／訊問筆記</b></p><p style="font-size:11pt">當事人：${esc(cur.name)}　案由：${esc(caseLabel())}　記錄人：${esc(settings.lawyer)}律師</p><p style="font-size:11pt">※本紀錄為律師陪同在場時自行記錄，非機關製作之正式筆錄。</p><br>${esc(qaText([s])).split('\n').map(l=>`<p>${l||'&nbsp;'}</p>`).join('')}</body></html>`;
